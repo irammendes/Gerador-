@@ -3,38 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador e Analisador da Mega-Sena</title>
+    <title>Mega-Sena Analytics Pro v2.0</title>
     <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --gray: #95a5a6;
+            --white: #ffffff;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1000px;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f8f9fa;
-            line-height: 1.6;
         }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-        .section {
-            background-color: white;
+        
+        .card {
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
             padding: 25px;
             margin-bottom: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        h2 {
-            color: #2980b9;
-            margin-top: 0;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        button {
-            background-color: #3498db;
+        
+        .btn {
+            display: inline-block;
+            background: var(--secondary);
             color: white;
             border: none;
             padding: 12px 20px;
@@ -42,534 +54,889 @@
             cursor: pointer;
             font-size: 16px;
             margin: 10px 0;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
         }
-        button:hover {
-            background-color: #2980b9;
+        
+        .btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
         }
-        button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
+        
+        .btn-danger {
+            background: var(--danger);
         }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+        
         .numero {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             width: 36px;
             height: 36px;
-            text-align: center;
-            line-height: 36px;
             margin: 5px;
-            background-color: #3498db;
+            background: var(--secondary);
             color: white;
             border-radius: 50%;
             font-weight: bold;
             font-size: 14px;
         }
+        
         .numero-sorteado {
-            background-color: #e74c3c;
+            background: var(--danger);
             box-shadow: 0 0 5px rgba(231, 76, 60, 0.7);
         }
-        .frequente {
-            background-color: #27ae60;
+        
+        .numero-frequente {
+            background: var(--success);
         }
-        .raro {
-            background-color: #e74c3c;
+        
+        .numero-raro {
+            background: var(--warning);
         }
-        .atrasado {
-            background-color: #f39c12;
+        
+        .auth-container {
+            max-width: 400px;
+            margin: 5% auto;
         }
-        select, input {
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            width: 100%;
-            max-width: 300px;
-            box-sizing: border-box;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
+        
+        .header {
             text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--secondary);
         }
-        th {
-            background-color: #3498db;
-            color: white;
+        
+        .flex-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        
+        .col {
+            flex: 1;
+            min-width: 250px;
         }
+        
         .grafico {
             height: 20px;
-            background-color: #ecf0f1;
-            margin: 8px 0;
+            background: var(--light);
             border-radius: 4px;
             overflow: hidden;
+            margin: 8px 0;
         }
+        
         .barra {
             height: 100%;
-            background-color: #3498db;
+            background: var(--secondary);
             transition: width 0.5s;
         }
+        
         .destaque {
             font-weight: bold;
-            color: #2c3e50;
             font-size: 18px;
+            color: var(--primary);
         }
-        .info-box {
-            background-color: #e8f4fc;
-            border-left: 4px solid #3498db;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 0 6px 6px 0;
-        }
-        .jogo-container {
-            margin: 15px 0;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 6px;
-            border-left: 4px solid #3498db;
-        }
+        
         .hidden {
             display: none;
         }
-        .flex-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
         }
-        .flex-item {
-            flex: 1;
-            min-width: 200px;
-        }
+        
         @media (max-width: 768px) {
-            .flex-container {
+            .flex-grid {
                 flex-direction: column;
             }
-            .flex-item {
+            
+            .col {
                 width: 100%;
             }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        th {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
 <body>
-    <h1>Gerador e Analisador Avançado da Mega-Sena</h1>
-
-    <div class="section">
-        <h2>Gerador de Jogos</h2>
-        <div class="flex-container">
-            <div class="flex-item">
-                <label for="quantidadeJogos">Quantidade de jogos:</label>
-                <input type="number" id="quantidadeJogos" min="1" max="20" value="1">
-            </div>
-            <div class="flex-item">
-                <label for="numerosPorJogo">Números por jogo (6-15):</label>
-                <input type="number" id="numerosPorJogo" min="6" max="15" value="6">
-            </div>
-        </div>
-        <div class="flex-container">
-            <div class="flex-item">
-                <button id="btnGerar" onclick="gerarJogos()">Gerar Jogos</button>
-                <button onclick="limparJogos()">Limpar</button>
-            </div>
-        </div>
-        <div id="jogosGerados"></div>
-    </div>
-
-    <div class="section">
-        <h2>Análise de Resultados Históricos</h2>
-        <div class="flex-container">
-            <div class="flex-item">
-                <label for="periodoAnalise">Período de análise:</label>
-                <select id="periodoAnalise" onchange="toggleCustomPeriodo()">
-                    <option value="all">Todos os resultados</option>
-                    <option value="last10">Últimos 10 anos</option>
-                    <option value="last5">Últimos 5 anos</option>
-                    <option value="last2">Últimos 2 anos</option>
-                    <option value="custom">Personalizado</option>
-                </select>
-            </div>
-            <div class="flex-item hidden" id="customPeriodoContainer">
-                <label for="anoInicio">Ano início:</label>
-                <input type="number" id="anoInicio" min="1996" max="2024" placeholder="1996">
-                <label for="anoFim">Ano fim:</label>
-                <input type="number" id="anoFim" min="1996" max="2024" placeholder="2024">
-            </div>
-        </div>
-        <button id="btnAnalisar" onclick="analisarResultados()">Analisar Resultados</button>
-        <div id="analiseResultados"></div>
-    </div>
-
-    <div class="section">
-        <h2>Estatísticas e Frequência</h2>
-        <div id="frequenciaNumeros"></div>
-        <div id="estatisticasAvancadas" class="hidden">
-            <h3>Estatísticas Avançadas</h3>
-            <div id="contentEstatisticas"></div>
-        </div>
-        <button id="btnMaisEstatisticas" onclick="toggleEstatisticasAvancadas()">Mostrar Mais Estatísticas</button>
-    </div>
-
-    <div class="section">
-        <h2>Verificador de Acertos</h2>
-        <div class="flex-container">
-            <div class="flex-item">
-                <label for="meusNumeros">Seus números (separados por vírgula ou espaço):</label>
-                <input type="text" id="meusNumeros" placeholder="Ex: 5, 10, 15, 20, 25, 30">
-            </div>
-            <div class="flex-item">
-                <label for="concursoVerificar">Concurso específico (opcional):</label>
-                <input type="number" id="concursoVerificar" placeholder="Número do concurso">
-            </div>
-        </div>
-        <button id="btnVerificar" onclick="verificarAcertos()">Verificar Acertos</button>
-        <div id="resultadoVerificacao"></div>
+    <div id="app">
+        <!-- Componentes serão renderizados aqui -->
     </div>
 
     <script>
-        let resultadosMegaSena = [];
-        let frequenciaNumeros = Array(60).fill(0);
-        let ultimosResultadosAnalisados = [];
-        let estatisticasCalculadas = false;
-
-        fetch('resultados.json')
-            .then(response => response.json())
-            .then(data => {
-                resultadosMegaSena = data;
-                inicializarPagina();
-            })
-            .catch(error => console.error('Erro ao carregar resultados:', error));
-
-        function inicializarPagina() {
-            ultimosResultadosAnalisados = [...resultadosMegaSena];
-            calcularFrequenciaNumeros(resultadosMegaSena);
-            calcularEstatisticasAvancadas(resultadosMegaSena);
-
-            document.getElementById('meusNumeros').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') verificarAcertos();
-            });
-        }
-
-        function gerarNumerosAleatorios(quantidade, min = 1, max = 60) {
-            const numeros = new Set();
-            while (numeros.size < quantidade) {
-                const num = Math.floor(Math.random() * (max - min + 1)) + min;
-                numeros.add(num);
-            }
-            return Array.from(numeros).sort((a, b) => a - b);
-        }
-
-        function gerarJogos() {
-            const quantidade = parseInt(document.getElementById('quantidadeJogos').value) || 1;
-            const numerosPorJogo = parseInt(document.getElementById('numerosPorJogo').value) || 6;
-
-            if (numerosPorJogo < 6 || numerosPorJogo > 15) {
-                alert("Por favor, insira entre 6 e 15 números por jogo.");
-                return;
-            }
-
-            const container = document.getElementById('jogosGerados');
-            container.innerHTML = '<h3>Seus Jogos Gerados:</h3>';
-
-            for (let i = 0; i < quantidade; i++) {
-                const jogo = gerarNumerosAleatorios(numerosPorJogo);
-                const jogoElement = document.createElement('div');
-                jogoElement.className = 'jogo-container';
-
-                const numerosHTML = jogo.map(num => {
-                    const atrasado = verificarAtraso(num);
-                    return `<span class="numero ${atrasado ? 'atrasado' : ''}" title="${atrasado ? 'Número atrasado' : ''}">${num.toString().padStart(2, '0')}</span>`;
-                }).join(' ');
-
-                jogoElement.innerHTML = `
-                    <p><strong>Jogo ${i+1}:</strong></p>
-                    <div>${numerosHTML}</div>
-                    <small>${jogo.join(', ')}</small>
-                `;
-                container.appendChild(jogoElement);
-            }
-        }
-
-        function limparJogos() {
-            document.getElementById('jogosGerados').innerHTML = '';
-        }
-
-        function verificarAtraso(numero) {
-            if (!ultimosResultadosAnalisados.length) return false;
-
-            const ultimos10Concursos = ultimosResultadosAnalisados.slice(0, 10);
-            return !ultimos10Concursos.some(concurso => concurso.numeros.includes(numero));
-        }
-
-        function toggleCustomPeriodo() {
-            const periodo = document.getElementById('periodoAnalise').value;
-            const customContainer = document.getElementById('customPeriodoContainer');
-
-            if (periodo === 'custom') {
-                customContainer.classList.remove('hidden');
-                const currentYear = new Date().getFullYear();
-                document.getElementById('anoInicio').value = currentYear - 5;
-                document.getElementById('anoFim').value = currentYear;
-            } else {
-                customContainer.classList.add('hidden');
-            }
-        }
-
-        function analisarResultados() {
-            const periodoSelecionado = document.getElementById('periodoAnalise').value;
-            let anoInicio, anoFim = new Date().getFullYear();
-
-            switch (periodoSelecionado) {
-                case 'last10':
-                    anoInicio = anoFim - 10;
-                    break;
-                case 'last5':
-                    anoInicio = anoFim - 5;
-                    break;
-                case 'last2':
-                    anoInicio = anoFim - 2;
-                    break;
-                case 'custom':
-                    anoInicio = parseInt(document.getElementById('anoInicio').value) || 1996;
-                    anoFim = parseInt(document.getElementById('anoFim').value) || new Date().getFullYear();
-                    break;
-                default:
-                    anoInicio = 1996;
-            }
-
-            if (anoInicio < 1996) anoInicio = 1996;
-            if (anoFim > new Date().getFullYear()) anoFim = new Date().getFullYear();
-            if (anoInicio > anoFim) [anoInicio, anoFim] = [anoFim, anoInicio];
-
-            const resultadosFiltrados = resultadosMegaSena.filter(resultado => {
-                const anoResultado = parseInt(resultado.data.split('/')[2]);
-                return anoResultado >= anoInicio && anoResultado <= anoFim;
-            });
-
-            ultimosResultadosAnalisados = [...resultadosFiltrados];
-            exibirAnalise(resultadosFiltrados, anoInicio, anoFim);
-            calcularFrequenciaNumeros(resultadosFiltrados);
-            calcularEstatisticasAvancadas(resultadosFiltrados);
-            estatisticasCalculadas = true;
-        }
-
-        function exibirAnalise(resultados, anoInicio, anoFim) {
-            const container = document.getElementById('analiseResultados');
-            const totalConcursos = resultados.length;
-
-            if (totalConcursos === 0) {
-                container.innerHTML = '<div class="info-box">Nenhum resultado encontrado para o período selecionado.</div>';
-                return;
-            }
-
-            const numerosOrdenados = [...frequenciaNumeros.entries()]
-                .map(([num, freq]) => ({ numero: num + 1, frequencia: freq }))
-                .sort((a, b) => b.frequencia - a.frequencia);
-
-            const maisSorteados = numerosOrdenados.slice(0, 5).map(item => item.numero);
-            const menosSorteados = numerosOrdenados.slice(-5).reverse().map(item => item.numero);
-
-            container.innerHTML = `
-                <div class="info-box">
-                    <h3>Análise de ${totalConcursos} concursos (${anoInicio}-${anoFim})</h3>
-                    <p><strong>Período:</strong> ${resultados[resultados.length-1].data} a ${resultados[0].data}</p>
-                    <p><strong>Números mais sorteados:</strong> ${maisSorteados.join(', ')}</p>
-                    <p><strong>Números menos sorteados:</strong> ${menosSorteados.join(', ')}</p>
-                </div>
-            `;
-        }
-
-        function calcularFrequenciaNumeros(resultados) {
-            frequenciaNumeros = Array(60).fill(0);
-
-            resultados.forEach(resultado => {
-                resultado.numeros.forEach(num => {
-                    frequenciaNumeros[num-1]++;
-                });
-            });
-
-            exibirFrequenciaNumeros(frequenciaNumeros, resultados.length);
-        }
-
-        function exibirFrequenciaNumeros(frequencia, totalConcursos) {
-            const container = document.getElementById('frequenciaNumeros');
-            const maxFrequencia = Math.max(...frequencia);
-            const minFrequencia = Math.min(...frequencia);
-
-            const numerosOrdenados = frequencia.map((freq, index) => ({
-                numero: index + 1,
-                frequencia: freq,
-                porcentagem: totalConcursos > 0 ? (freq / totalConcursos * 100).toFixed(1) : 0,
-                atrasado: verificarAtraso(index + 1)
-            })).sort((a, b) => b.frequencia - a.frequencia);
-
-            container.innerHTML = `
-                <h3>Frequência de Números Sorteados</h3>
-                <p>Total de concursos considerados: ${totalConcursos}</p>
-            `;
-
-            const tabela = document.createElement('table');
-            const thead = document.createElement('thead');
-            thead.innerHTML = `
-                <tr>
-                    <th>Número</th>
-                    <th>Frequência</th>
-                    <th>% de Concursos</th>
-                    <th>Gráfico</th>
-                </tr>
-            `;
-            tabela.appendChild(thead);
-
-            const tbody = document.createElement('tbody');
-
-            numerosOrdenados.forEach(item => {
-                const tr = document.createElement('tr');
-                let classe = '';
-
-                if (item.frequencia === maxFrequencia) {
-                    classe = 'frequente';
-                } else if (item.frequencia === minFrequencia && totalConcursos > 5) {
-                    classe = 'raro';
-                } else if (item.atrasado) {
-                    classe = 'atrasado';
+        const MegaSenaApp = {
+            state: {
+                user: null,
+                resultados: [],
+                frequenciaNumeros: Array(60).fill(0),
+                ultimosResultadosAnalisados: [],
+                estatisticasCalculadas: false,
+                filtros: {
+                    periodo: 'all',
+                    anoInicio: null,
+                    anoFim: null
+                },
+                loading: false,
+                error: null
+            },
+            
+            init() {
+                this.setupEventListeners();
+                this.loadData();
+                this.render();
+            },
+            
+            async loadData() {
+                this.setState({ loading: true });
+                
+                try {
+                    const response = await fetch('resultados.json');
+                    if (!response.ok) throw new Error('Arquivo não encontrado');
+                    
+                    const data = await response.json();
+                    this.setState({ 
+                        resultados: data,
+                        ultimosResultadosAnalisados: data,
+                        loading: false 
+                    });
+                    
+                    this.calcularFrequenciaNumeros(data);
+                    this.calcularEstatisticasAvancadas(data);
+                    
+                } catch (error) {
+                    console.warn('Usando dados de exemplo:', error);
+                    this.carregarDadosExemplo();
                 }
-
-                tr.innerHTML = `
-                    <td><span class="numero ${classe}" title="${classe === 'atrasado' ? 'Número atrasado (não sorteado nos últimos 10 concursos)' : ''}">${item.numero.toString().padStart(2, '0')}</span></td>
-                    <td>${item.frequencia}</td>
-                    <td>${item.porcentagem}%</td>
-                    <td>
-                        <div class="grafico">
-                            <div class="barra" style="width: ${item.porcentagem}%"></div>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            tabela.appendChild(tbody);
-            container.appendChild(tabela);
-        }
-
-        function calcularEstatisticasAvancadas(resultados) {
-            if (resultados.length === 0) return;
-
-            const content = document.getElementById('contentEstatisticas');
-            content.innerHTML = '';
-
-            const parImparStats = { pares: 0, impares: 0 };
-            resultados.forEach(resultado => {
-                resultado.numeros.forEach(num => {
-                    num % 2 === 0 ? parImparStats.pares++ : parImparStats.impares++;
+            },
+            
+            carregarDadosExemplo() {
+                const dados = [
+                    { concurso: 1, data: "11/03/1996", numeros: [4, 5, 30, 33, 41, 52] },
+                    { concurso: 2, data: "18/03/1996", numeros: [10, 11, 26, 38, 56, 59] },
+                    { concurso: 3, data: "25/03/1996", numeros: [2, 9, 34, 45, 49, 51] },
+                    { concurso: 4, data: "01/04/1996", numeros: [17, 20, 25, 37, 42, 53] },
+                    { concurso: 5, data: "08/04/1996", numeros: [3, 10, 27, 38, 51, 52] },
+                    { concurso: 6, data: "15/04/1996", numeros: [1, 12, 22, 24, 33, 56] },
+                    { concurso: 7, data: "22/04/1996", numeros: [8, 19, 28, 36, 43, 50] },
+                    { concurso: 8, data: "29/04/1996", numeros: [5, 21, 29, 32, 40, 44] },
+                    { concurso: 9, data: "06/05/1996", numeros: [6, 13, 15, 25, 39, 58] },
+                    { concurso: 10, data: "13/05/1996", numeros: [7, 14, 31, 35, 47, 54] }
+                ];
+                
+                this.setState({ 
+                    resultados: dados,
+                    ultimosResultadosAnalisados: dados,
+                    loading: false 
                 });
-            });
-
-            const dezenasStats = Array(6).fill(0).map(() => Array(10).fill(0));
-            resultados.forEach(resultado => {
-                resultado.numeros.forEach(num => {
-                    const dezena = Math.floor((num - 1) / 10);
-                    const unidade = (num - 1) % 10;
-                    dezenasStats[dezena][unidade]++;
-                });
-            });
-
-            content.innerHTML += `
-                <h4>Distribuição de Pares e Ímpares</h4>
-                <p>Pares: ${parImparStats.pares} (${(parImparStats.pares/(resultados.length*6)*100).toFixed(1)}%)</p>
-                <p>Ímpares: ${parImparStats.impares} (${(parImparStats.impares/(resultados.length*6)*100).toFixed(1)}%)</p>
-
-                <h4>Distribuição por Dezenas</h4>
-                <div class="flex-container">
-                    ${dezenasStats.map((dezena, i) => `
-                        <div class="flex-item">
-                            <h5>${i*10+1}-${i*10+10}:</h5>
-                            <p>Sorteados: ${dezena.reduce((a, b) => a + b, 0)}</p>
-                            <p>Média: ${(dezena.reduce((a, b) => a + b, 0)/resultados.length).toFixed(2)} por concurso</p>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        function toggleEstatisticasAvancadas() {
-            const container = document.getElementById('estatisticasAvancadas');
-            const btn = document.getElementById('btnMaisEstatisticas');
-
-            if (container.classList.contains('hidden')) {
-                if (!estatisticasCalculadas) {
-                    calcularEstatisticasAvancadas(ultimosResultadosAnalisados);
-                    estatisticasCalculadas = true;
-                }
-                container.classList.remove('hidden');
-                btn.textContent = 'Mostrar Menos Estatísticas';
-            } else {
-                container.classList.add('hidden');
-                btn.textContent = 'Mostrar Mais Estatísticas';
-            }
-        }
-
-        function verificarAcertos() {
-            const numerosInput = document.getElementById('meusNumeros').value.trim();
-            const concursoInput = document.getElementById('concursoVerificar').value.trim();
-
-            if (!numerosInput) {
-                alert("Por favor, digite seus números para verificar.");
-                return;
-            }
-
-            const numerosArray = numerosInput.split(/[,\s]+/).map(item => parseInt(item.trim()));
-            const meusNumeros = numerosArray.filter(num => !isNaN(num) && num >= 1 && num <= 60);
-
-            if (meusNumeros.length < 6 || meusNumeros.length > 15) {
-                alert("Por favor, digite entre 6 e 15 números válidos (1-60).");
-                return;
-            }
-
-            const uniqueNumbers = [...new Set(meusNumeros)];
-            if (uniqueNumbers.length !== meusNumeros.length) {
-                alert("Você digitou números duplicados. Por favor, corrija.");
-                return;
-            }
-
-            let resultado;
-            if (concursoInput) {
-                const concursoNum = parseInt(concursoInput);
-                resultado = resultadosMegaSena.find(r => r.concurso === concursoNum);
-
-                if (!resultado) {
-                    alert("Concurso não encontrado nos nossos registros.");
+                
+                this.calcularFrequenciaNumeros(dados);
+                this.calcularEstatisticasAvancadas(dados);
+            },
+            
+            setState(newState) {
+                this.state = { ...this.state, ...newState };
+                this.render();
+            },
+            
+            render() {
+                const app = document.getElementById('app');
+                
+                if (!this.state.user) {
+                    app.innerHTML = this.loginTemplate();
                     return;
                 }
-            } else {
-                resultado = resultadosMegaSena[0];
+                
+                app.innerHTML = `
+                    <div class="container">
+                        <header class="header">
+                            <h1>Mega-Sena Analytics Pro v2.0</h1>
+                            <div style="margin-top: 15px;">
+                                <button class="btn btn-danger" onclick="MegaSenaApp.logout()">Sair</button>
+                                ${this.state.user?.username === 'irammendes' ? `
+                                    <button class="btn btn-warning" onclick="MegaSenaApp.mostrarPainelAdmin()">Painel Admin</button>
+                                ` : ''}
+                            </div>
+                        </header>
+                        
+                        <div class="flex-grid">
+                            <div class="col">
+                                ${this.geradorTemplate()}
+                            </div>
+                            <div class="col">
+                                ${this.analiseTemplate()}
+                            </div>
+                        </div>
+                        
+                        ${this.estatisticasTemplate()}
+                        ${this.verificadorTemplate()}
+                    </div>
+                `;
+                
+                // Adiciona o modal do painel admin se não existir
+                if (this.state.user?.username === 'irammendes' && !document.getElementById('painelAdminModal')) {
+                    document.body.insertAdjacentHTML('beforeend', this.painelAdminTemplate());
+                }
+            },
+            
+            loginTemplate() {
+                return `
+                    <div class="auth-container card animate">
+                        <h2>Acesso ao Sistema v2.0</h2>
+                        <form onsubmit="MegaSenaApp.handleLogin(event)">
+                            <div>
+                                <label>Usuário:</label>
+                                <input type="text" required>
+                            </div>
+                            <div>
+                                <label>Senha:</label>
+                                <input type="password" required>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Entrar</button>
+                            ${this.state.error ? `<p class="error-message">${this.state.error}</p>` : ''}
+                        </form>
+                    </div>
+                `;
+            },
+            
+            painelAdminTemplate() {
+                return `
+                    <div id="painelAdminModal" class="modal">
+                        <div class="card" style="margin: 5% auto; max-width: 500px;">
+                            <h2>Painel Administrativo</h2>
+                            <button class="btn btn-danger" style="float: right;" onclick="MegaSenaApp.fecharPainelAdmin()">X</button>
+                            
+                            <h3 style="margin-top: 20px;">Criar Novo Usuário</h3>
+                            <form onsubmit="MegaSenaApp.criarNovoUsuario(event)">
+                                <div>
+                                    <label>Nome de usuário:</label>
+                                    <input type="text" id="novoUsuario" required>
+                                </div>
+                                <div>
+                                    <label>Senha:</label>
+                                    <input type="password" id="novaSenha" required>
+                                </div>
+                                <button type="submit" class="btn btn-success">Criar Usuário</button>
+                            </form>
+                            
+                            <h3 style="margin-top: 30px;">Usuários Existentes</h3>
+                            <div id="listaUsuarios" style="max-height: 300px; overflow-y: auto;">
+                                ${this.listarUsuariosExistente()}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            geradorTemplate() {
+                return `
+                    <div class="card animate">
+                        <h2>Gerador de Jogos</h2>
+                        <div>
+                            <label>Quantidade de jogos:</label>
+                            <input type="number" id="quantidadeJogos" min="1" max="20" value="1">
+                        </div>
+                        <div>
+                            <label>Números por jogo (6-15):</label>
+                            <input type="number" id="numerosPorJogo" min="6" max="15" value="6">
+                        </div>
+                        <button class="btn" onclick="MegaSenaApp.gerarJogos()">Gerar Jogos</button>
+                        <button class="btn btn-danger" onclick="MegaSenaApp.limparJogos()">Limpar</button>
+                        <div id="jogosGerados" style="margin-top: 15px;"></div>
+                    </div>
+                `;
+            },
+            
+            analiseTemplate() {
+                return `
+                    <div class="card animate">
+                        <h2>Análise de Resultados</h2>
+                        <div>
+                            <label>Período de análise:</label>
+                            <select id="periodoAnalise" onchange="MegaSenaApp.toggleCustomPeriodo()" style="width: 100%; padding: 10px; margin-bottom: 15px;">
+                                <option value="all">Todos os resultados</option>
+                                <option value="last10">Últimos 10 anos</option>
+                                <option value="last5">Últimos 5 anos</option>
+                                <option value="last2">Últimos 2 anos</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                        </div>
+                        <div id="customPeriodoContainer" class="hidden">
+                            <div>
+                                <label>Ano início:</label>
+                                <input type="number" id="anoInicio" min="1996" max="2024" placeholder="1996">
+                            </div>
+                            <div>
+                                <label>Ano fim:</label>
+                                <input type="number" id="anoFim" min="1996" max="2024" placeholder="2024">
+                            </div>
+                        </div>
+                        <button class="btn" onclick="MegaSenaApp.analisarResultados()">Analisar</button>
+                        <div id="analiseResultados" style="margin-top: 15px;"></div>
+                    </div>
+                `;
+            },
+            
+            estatisticasTemplate() {
+                return `
+                    <div class="card animate">
+                        <h2>Estatísticas e Frequência</h2>
+                        <div id="frequenciaNumeros"></div>
+                        <div id="estatisticasAvancadas" class="hidden">
+                            <h3>Estatísticas Avançadas</h3>
+                            <div id="contentEstatisticas"></div>
+                        </div>
+                        <button class="btn" id="btnMaisEstatisticas" onclick="MegaSenaApp.toggleEstatisticasAvancadas()">Mostrar Mais Estatísticas</button>
+                    </div>
+                `;
+            },
+            
+            verificadorTemplate() {
+                return `
+                    <div class="card animate">
+                        <h2>Verificador de Acertos</h2>
+                        <div>
+                            <label>Seus números (separados por vírgula ou espaço):</label>
+                            <input type="text" id="meusNumeros" placeholder="Ex: 5, 10, 15, 20, 25, 30">
+                        </div>
+                        <div>
+                            <label>Concurso específico (opcional):</label>
+                            <input type="number" id="concursoVerificar" placeholder="Número do concurso">
+                        </div>
+                        <button class="btn" onclick="MegaSenaApp.verificarAcertos()">Verificar</button>
+                        <div id="resultadoVerificacao" style="margin-top: 15px;"></div>
+                    </div>
+                `;
+            },
+            
+            // Métodos para controlar o painel admin
+            mostrarPainelAdmin() {
+                document.getElementById('painelAdminModal').style.display = 'block';
+            },
+            
+            fecharPainelAdmin() {
+                document.getElementById('painelAdminModal').style.display = 'none';
+            },
+            
+            listarUsuariosExistente() {
+                const usuarios = JSON.parse(localStorage.getItem('megaSenaUsers')) || {
+                    'irammendes': 'GaelM2509',
+                    'usuario': 'mega2024',
+                    'teste': 'teste123'
+                };
+                
+                let html = '<table style="width: 100%;"><tr><th>Usuário</th><th>Ações</th></tr>';
+                
+                for (const [username, password] of Object.entries(usuarios)) {
+                    html += `
+                        <tr>
+                            <td>${username}</td>
+                            <td>
+                                ${username !== 'irammendes' ? `
+                                    <button class="btn btn-danger btn-sm" onclick="MegaSenaApp.removerUsuario('${username}')">Remover</button>
+                                ` : '<small>Admin principal</small>'}
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                html += '</table>';
+                return html;
+            },
+            
+            criarNovoUsuario(event) {
+                event.preventDefault();
+                const username = document.getElementById('novoUsuario').value.trim();
+                const password = document.getElementById('novaSenha').value.trim();
+                
+                if (!username || !password) {
+                    alert('Preencha todos os campos!');
+                    return;
+                }
+                
+                const usuarios = JSON.parse(localStorage.getItem('megaSenaUsers')) || {
+                    'irammendes': 'GaelM2509',
+                    'usuario': 'mega2024',
+                    'teste': 'teste123'
+                };
+                
+                if (usuarios[username]) {
+                    alert('Usuário já existe!');
+                    return;
+                }
+                
+                usuarios[username] = password;
+                localStorage.setItem('megaSenaUsers', JSON.stringify(usuarios));
+                
+                alert('Usuário criado com sucesso!');
+                document.getElementById('listaUsuarios').innerHTML = this.listarUsuariosExistente();
+                document.getElementById('novoUsuario').value = '';
+                document.getElementById('novaSenha').value = '';
+            },
+            
+            removerUsuario(username) {
+                if (username === 'irammendes') {
+                    alert('Não é possível remover o usuário admin principal!');
+                    return;
+                }
+                
+                if (!confirm(`Tem certeza que deseja remover o usuário ${username}?`)) {
+                    return;
+                }
+                
+                const usuarios = JSON.parse(localStorage.getItem('megaSenaUsers')) || {};
+                delete usuarios[username];
+                localStorage.setItem('megaSenaUsers', JSON.stringify(usuarios));
+                
+                document.getElementById('listaUsuarios').innerHTML = this.listarUsuariosExistente();
+            },
+            
+            handleLogin(event) {
+                event.preventDefault();
+                const credentials = {
+                    username: event.target[0].value.trim(),
+                    password: event.target[1].value.trim()
+                };
+                
+                const usuarios = JSON.parse(localStorage.getItem('megaSenaUsers')) || {
+                    'irammendes': 'GaelM2509',
+                    'usuario': 'mega2024',
+                    'teste': 'teste123'
+                };
+                
+                if (usuarios[credentials.username] && usuarios[credentials.username] === credentials.password) {
+                    this.setState({ 
+                        user: credentials,
+                        error: null
+                    });
+                    localStorage.setItem('megaSenaUser', JSON.stringify(credentials));
+                } else {
+                    this.setState({ error: 'Credenciais inválidas' });
+                }
+            },
+            
+            logout() {
+                this.setState({ user: null });
+                localStorage.removeItem('megaSenaUser');
+            },
+            
+            setupEventListeners() {
+                const savedUser = localStorage.getItem('megaSenaUser');
+                if (savedUser) {
+                    this.setState({ user: JSON.parse(savedUser) });
+                }
+                
+                // Event listener para tecla Enter no campo de números
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.getElementById('meusNumeros')?.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            this.verificarAcertos();
+                        }
+                    });
+                });
+            },
+            
+            toggleCustomPeriodo() {
+                const periodo = document.getElementById('periodoAnalise').value;
+                const container = document.getElementById('customPeriodoContainer');
+                
+                if (periodo === 'custom') {
+                    container.classList.remove('hidden');
+                    const currentYear = new Date().getFullYear();
+                    document.getElementById('anoInicio').value = currentYear - 5;
+                    document.getElementById('anoFim').value = currentYear;
+                } else {
+                    container.classList.add('hidden');
+                }
+            },
+            
+            toggleEstatisticasAvancadas() {
+                const container = document.getElementById('estatisticasAvancadas');
+                const btn = document.getElementById('btnMaisEstatisticas');
+                
+                if (container.classList.contains('hidden')) {
+                    if (!this.state.estatisticasCalculadas) {
+                        this.calcularEstatisticasAvancadas(this.state.ultimosResultadosAnalisados);
+                        this.setState({ estatisticasCalculadas: true });
+                    }
+                    container.classList.remove('hidden');
+                    btn.textContent = 'Mostrar Menos Estatísticas';
+                } else {
+                    container.classList.add('hidden');
+                    btn.textContent = 'Mostrar Mais Estatísticas';
+                }
+            },
+            
+            gerarJogos() {
+                const quantity = parseInt(document.getElementById('quantidadeJogos').value) || 1;
+                const perGame = parseInt(document.getElementById('numerosPorJogo').value) || 6;
+                
+                if (perGame < 6 || perGame > 15) {
+                    alert("Por favor, insira entre 6 e 15 números por jogo.");
+                    return;
+                }
+                
+                const container = document.getElementById('jogosGerados');
+                container.innerHTML = '<h3>Seus Jogos Gerados:</h3>';
+                
+                for (let i = 0; i < quantity; i++) {
+                    const game = this.gerarNumerosAleatorios(perGame);
+                    const atrasados = game.map(num => this.verificarAtraso(num));
+                    
+                    container.innerHTML += `
+                        <div class="card" style="margin-top: 10px;">
+                            <p><strong>Jogo ${i+1}:</strong></p>
+                            <div>${game.map((num, idx) => `
+                                <span class="numero ${atrasados[idx] ? 'numero-raro' : ''}" 
+                                      title="${atrasados[idx] ? 'Número atrasado' : ''}">
+                                    ${num.toString().padStart(2, '0')}
+                                </span>
+                            `).join('')}</div>
+                            <small>${game.join(', ')}</small>
+                        </div>
+                    `;
+                }
+            },
+            
+            gerarNumerosAleatorios(quantidade) {
+                const numeros = new Set();
+                while (numeros.size < quantidade) {
+                    numeros.add(Math.floor(Math.random() * 60) + 1);
+                }
+                return Array.from(numeros).sort((a, b) => a - b);
+            },
+            
+            limparJogos() {
+                document.getElementById('jogosGerados').innerHTML = '';
+            },
+            
+            verificarAtraso(numero) {
+                if (!this.state.ultimosResultadosAnalisados.length) return false;
+                
+                const ultimos10Concursos = this.state.ultimosResultadosAnalisados.slice(0, 10);
+                return !ultimos10Concursos.some(concurso => concurso.numeros.includes(numero));
+            },
+            
+            analisarResultados() {
+                const periodoSelecionado = document.getElementById('periodoAnalise').value;
+                let anoInicio, anoFim = new Date().getFullYear();
+                
+                switch (periodoSelecionado) {
+                    case 'last10':
+                        anoInicio = anoFim - 10;
+                        break;
+                    case 'last5':
+                        anoInicio = anoFim - 5;
+                        break;
+                    case 'last2':
+                        anoInicio = anoFim - 2;
+                        break;
+                    case 'custom':
+                        anoInicio = parseInt(document.getElementById('anoInicio').value) || 1996;
+                        anoFim = parseInt(document.getElementById('anoFim').value) || anoFim;
+                        break;
+                    default:
+                        anoInicio = 1996;
+                }
+                
+                if (anoInicio < 1996) anoInicio = 1996;
+                if (anoFim > new Date().getFullYear()) anoFim = new Date().getFullYear();
+                if (anoInicio > anoFim) [anoInicio, anoFim] = [anoFim, anoInicio];
+                
+                const resultadosFiltrados = this.state.resultados.filter(resultado => {
+                    const partesData = resultado.data.split('/');
+                    if (partesData.length !== 3) return false;
+                    const anoResultado = parseInt(partesData[2]);
+                    return anoResultado >= anoInicio && anoResultado <= anoFim;
+                });
+                
+                if (resultadosFiltrados.length === 0) {
+                    document.getElementById('analiseResultados').innerHTML = `
+                        <div class="card">
+                            <p>Nenhum resultado encontrado para o período selecionado.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                this.setState({
+                    ultimosResultadosAnalisados: resultadosFiltrados,
+                    estatisticasCalculadas: false
+                });
+                
+                this.exibirAnalise(resultadosFiltrados, anoInicio, anoFim);
+                this.calcularFrequenciaNumeros(resultadosFiltrados);
+                this.calcularEstatisticasAvancadas(resultadosFiltrados);
+            },
+            
+            exibirAnalise(resultados, anoInicio, anoFim) {
+                const container = document.getElementById('analiseResultados');
+                const totalConcursos = resultados.length;
+                
+                const freqPeriodo = Array(60).fill(0);
+                resultados.forEach(resultado => {
+                    resultado.numeros.forEach(num => freqPeriodo[num-1]++);
+                });
+                
+                const numerosOrdenados = [...freqPeriodo.entries()]
+                    .map(([num, freq]) => ({ numero: num + 1, frequencia: freq }))
+                    .sort((a, b) => b.frequencia - a.frequencia);
+                
+                const maisSorteados = numerosOrdenados.slice(0, 5).map(item => item.numero);
+                const menosSorteados = numerosOrdenados.slice(-5).reverse().map(item => item.numero);
+                
+                container.innerHTML = `
+                    <div class="card">
+                        <h3>Análise de ${totalConcursos} concursos (${anoInicio}-${anoFim})</h3>
+                        <p><strong>Período:</strong> ${resultados[resultados.length-1].data} a ${resultados[0].data}</p>
+                        <p><strong>Números mais sorteados:</strong> ${maisSorteados.join(', ')}</p>
+                        <p><strong>Números menos sorteados:</strong> ${menosSorteados.join(', ')}</p>
+                    </div>
+                `;
+            },
+            
+            calcularFrequenciaNumeros(resultados) {
+                const frequencia = Array(60).fill(0);
+                resultados.forEach(resultado => {
+                    resultado.numeros.forEach(num => frequencia[num-1]++);
+                });
+                
+                this.setState({ frequenciaNumeros: frequencia });
+                this.exibirFrequenciaNumeros(frequencia, resultados.length);
+            },
+            
+            exibirFrequenciaNumeros(frequencia, totalConcursos) {
+                const container = document.getElementById('frequenciaNumeros');
+                const maxFrequencia = Math.max(...frequencia);
+                const minFrequencia = Math.min(...frequencia);
+                
+                const numerosOrdenados = frequencia.map((freq, index) => ({
+                    numero: index + 1,
+                    frequencia: freq,
+                    porcentagem: totalConcursos > 0 ? (freq / totalConcursos * 100).toFixed(1) : 0,
+                    atrasado: this.verificarAtraso(index + 1)
+                })).sort((a, b) => b.frequencia - a.frequencia);
+                
+                container.innerHTML = `
+                    <h3>Frequência de Números Sorteados</h3>
+                    <p>Total de concursos considerados: ${totalConcursos}</p>
+                `;
+                
+                const tabela = document.createElement('table');
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr>
+                        <th>Número</th>
+                        <th>Frequência</th>
+                        <th>% de Concursos</th>
+                        <th>Gráfico</th>
+                    </tr>
+                `;
+                tabela.appendChild(thead);
+                
+                const tbody = document.createElement('tbody');
+                
+                numerosOrdenados.forEach(item => {
+                    const tr = document.createElement('tr');
+                    let classe = '';
+                    
+                    if (item.frequencia === maxFrequencia) {
+                        classe = 'numero-frequente';
+                    } else if (item.frequencia === minFrequencia && totalConcursos > 5) {
+                        classe = 'numero-raro';
+                    } else if (item.atrasado) {
+                        classe = 'numero-raro';
+                    }
+                    
+                    tr.innerHTML = `
+                        <td><span class="numero ${classe}" title="${classe === 'numero-frequente' ? 'Número frequente' : classe === 'numero-raro' ? 'Número raro ou atrasado' : ''}">${item.numero.toString().padStart(2, '0')}</span></td>
+                        <td>${item.frequencia}</td>
+                        <td>${item.porcentagem}%</td>
+                        <td>
+                            <div class="grafico">
+                                <div class="barra" style="width: ${item.porcentagem}%"></div>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                
+                tabela.appendChild(tbody);
+                container.appendChild(tabela);
+            },
+            
+            calcularEstatisticasAvancadas(resultados) {
+                if (resultados.length === 0) return;
+                
+                const content = document.getElementById('contentEstatisticas');
+                content.innerHTML = '';
+                
+                // Estatísticas de pares e ímpares
+                const parImparStats = { pares: 0, impares: 0 };
+                resultados.forEach(resultado => {
+                    resultado.numeros.forEach(num => {
+                        num % 2 === 0 ? parImparStats.pares++ : parImparStats.impares++;
+                    });
+                });
+                
+                // Estatísticas por dezenas
+                const dezenasStats = Array(6).fill(0).map(() => Array(10).fill(0));
+                resultados.forEach(resultado => {
+                    resultado.numeros.forEach(num => {
+                        const dezena = Math.floor((num - 1) / 10);
+                        const unidade = (num - 1) % 10;
+                        dezenasStats[dezena][unidade]++;
+                    });
+                });
+                
+                content.innerHTML = `
+                    <div class="card">
+                        <h4>Distribuição de Pares e Ímpares</h4>
+                        <p>Pares: ${parImparStats.pares} (${(parImparStats.pares/(resultados.length*6)*100).toFixed(1)}%)</p>
+                        <p>Ímpares: ${parImparStats.impares} (${(parImparStats.impares/(resultados.length*6)*100).toFixed(1)}%)</p>
+                    </div>
+                    
+                    <div class="card" style="margin-top: 15px;">
+                        <h4>Distribuição por Dezenas</h4>
+                        <div class="flex-grid">
+                            ${dezenasStats.map((dezena, i) => `
+                                <div class="col">
+                                    <h5>${i*10+1}-${i*10+10}:</h5>
+                                    <p>Total: ${dezena.reduce((a, b) => a + b, 0)}</p>
+                                    <p>Média: ${(dezena.reduce((a, b) => a + b, 0)/resultados.length).toFixed(2)} por concurso</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                this.setState({ estatisticasCalculadas: true });
+            },
+            
+            verificarAcertos() {
+                const numerosInput = document.getElementById('meusNumeros').value.trim();
+                const concursoInput = document.getElementById('concursoVerificar').value.trim();
+                
+                if (!numerosInput) {
+                    alert("Por favor, digite seus números para verificar.");
+                    return;
+                }
+                
+                const numerosArray = numerosInput.split(/[,\s]+/).map(item => parseInt(item.trim()));
+                const meusNumeros = numerosArray.filter(num => !isNaN(num) && num >= 1 && num <= 60);
+                
+                if (meusNumeros.length < 6 || meusNumeros.length > 15) {
+                    alert("Por favor, digite entre 6 e 15 números válidos (1-60).");
+                    return;
+                }
+                
+                const uniqueNumbers = [...new Set(meusNumeros)];
+                if (uniqueNumbers.length !== meusNumeros.length) {
+                    alert("Você digitou números duplicados. Por favor, corrija.");
+                    return;
+                }
+                
+                let resultado;
+                if (concursoInput) {
+                    const concursoNum = parseInt(concursoInput);
+                    resultado = this.state.resultados.find(r => r.concurso === concursoNum);
+                    
+                    if (!resultado) {
+                        alert("Concurso não encontrado nos nossos registros.");
+                        return;
+                    }
+                } else {
+                    resultado = this.state.resultados[0];
+                }
+                
+                const acertos = meusNumeros.filter(num => resultado.numeros.includes(num));
+                const numerosSorteadosHTML = resultado.numeros.map(num =>
+                    `<span class="numero ${acertos.includes(num) ? 'numero-sorteado' : ''}">${num.toString().padStart(2, '0')}</span>`
+                ).join(' ');
+                
+                const meusNumerosHTML = meusNumeros.map(num =>
+                    `<span class="numero ${resultado.numeros.includes(num) ? 'numero-sorteado' : ''}">${num.toString().padStart(2, '0')}</span>`
+                ).join(' ');
+                
+                const container = document.getElementById('resultadoVerificacao');
+                container.innerHTML = `
+                    <div class="card">
+                        <h3>Resultado da Verificação</h3>
+                        <p><strong>Concurso ${resultado.concurso}</strong> (${resultado.data})</p>
+                        <p>Números sorteados: ${numerosSorteadosHTML}</p>
+                        <p>Seus números: ${meusNumerosHTML}</p>
+                        <p class="destaque">Você acertou ${acertos.length} número(s): ${acertos.map(n => n.toString().padStart(2, '0')).join(', ')}</p>
+                    </div>
+                `;
             }
+        };
 
-            const acertos = meusNumeros.filter(num => resultado.numeros.includes(num));
-            const numerosSorteadosHTML = resultado.numeros.map(num =>
-                `<span class="numero ${acertos.includes(num) ? 'numero-sorteado' : ''}">${num.toString().padStart(2, '0')}</span>`
-            ).join(' ');
-
-            const meusNumerosHTML = meusNumeros.map(num =>
-                `<span class="numero ${resultado.numeros.includes(num) ? 'numero-sorteado' : ''}">${num.toString().padStart(2, '0')}</span>`
-            ).join(' ');
-
-            const container = document.getElementById('resultadoVerificacao');
-            container.innerHTML = `
-                <div class="info-box">
-                    <h3>Resultado da Verificação</h3>
-                    <p><strong>Concurso ${resultado.concurso}</strong> (${resultado.data})</p>
-                    <p>Números sorteados: ${numerosSorteadosHTML}</p>
-                    <p>Seus números: ${meusNumerosHTML}</p>
-                    <p class="destaque">Você acertou ${acertos.length} número(s): ${acertos.map(n => n.toString().padStart(2, '0')).join(', ')}</p>
-                </div>
-            `;
-        }
+        document.addEventListener('DOMContentLoaded', () => MegaSenaApp.init());
     </script>
 </body>
 </html>
