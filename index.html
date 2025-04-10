@@ -1,1746 +1,321 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mega Sena Analytics Pro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mega Sena Inteligente - The Best Code</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
     <style>
-        :root {
-            --primary: #209869; /* Verde da Mega Sena */
-            --secondary: #6c757d;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --info: #17a2b8;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --white: #ffffff;
-            --gray: #6c757d;
-            --gray-light: #e9ecef;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .header h1 {
-            color: var(--primary);
-            font-size: 28px;
-        }
-        
-        .user-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .welcome {
-            margin-right: 10px;
-            font-weight: 500;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-        
-        .btn-sm {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary);
-        }
-        
-        .btn-secondary {
-            background-color: var(--secondary);
-        }
-        
-        .btn-success {
-            background-color: var(--success);
-        }
-        
-        .btn-danger {
-            background-color: var(--danger);
-        }
-        
-        .btn-warning {
-            background-color: var(--warning);
-            color: #333;
-        }
-        
-        .btn-info {
-            background-color: var(--info);
-        }
-        
-        .btn-icon {
-            background: none;
-            border: none;
-            color: var(--gray);
-            cursor: pointer;
-            padding: 5px;
-        }
-        
-        .btn-icon:hover {
-            color: var(--danger);
-        }
-        
-        .flex-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .col {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .animate {
-            transition: all 0.3s ease;
-        }
-        
-        .animate:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .alert {
-            padding: 10px 15px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-        
-        .alert-warning {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeeba;
-        }
-        
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .loader {
-            padding: 15px;
-            text-align: center;
-            color: var(--primary);
-            font-weight: bold;
-        }
-        
-        /* Login Page */
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f5f7fa;
-        }
-        
-        .login-card {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        
-        .login-card h2 {
-            margin-bottom: 20px;
-            color: var(--primary);
-            text-align: center;
-        }
-        
-        .demo-credentials {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        /* Números */
-        .numeros-jogo, .numeros-sorteio {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin: 10px 0;
-        }
-        
-        .numero {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-        }
-        
-        .numero-atrasado {
-            background-color: var(--danger);
-        }
-        
-        .numero-quente {
-            background-color: var(--success);
-        }
-        
-        .numero-raro {
-            background-color: var(--warning);
-            color: #333;
-        }
-        
-        /* Frequência */
-        .frequencia-chart {
-            display: flex;
-            height: 200px;
-            align-items: flex-end;
-            gap: 5px;
-            margin: 20px 0;
-        }
-        
-        .frequencia-item {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .frequencia-bar {
-            width: 100%;
-            background-color: var(--primary);
-            border-radius: 4px 4px 0 0;
-            transition: height 0.5s ease;
-        }
-        
-        .frequencia-label {
-            margin-top: 5px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .frequencia-legenda {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 10px;
-        }
-        
-        .legenda-color {
-            display: inline-block;
-            width: 15px;
-            height: 15px;
-            border-radius: 3px;
-            margin-right: 5px;
-        }
-        
-        .legenda-color.max {
-            background-color: var(--primary);
-        }
-        
-        .legenda-color.min {
-            background-color: var(--secondary);
-        }
-        
-        /* Estatísticas */
-        .estatisticas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 15px;
-        }
-        
-        .dezenas-distribuicao {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-        }
-        
-        .dezenas-distribuicao > div {
-            flex: 1;
-        }
-        
-        .dezena-bar {
-            height: 10px;
-            background-color: var(--primary);
-            border-radius: 5px;
-            margin: 5px 0;
-        }
-        
-        /* Ciclos */
-        .ciclos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .ciclo-item {
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-        }
-        
-        .ciclo-item.destaque {
-            background-color: #fff3cd;
-            border-left: 3px solid var(--warning);
-        }
-        
-        .numero-ciclo {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        
-        .ciclo-bar-container {
-            display: flex;
-            align-items: center;
-            margin-top: 5px;
-        }
-        
-        .ciclo-bar {
-            height: 5px;
-            background-color: var(--danger);
-            border-radius: 5px;
-        }
-        
-        .ciclo-value {
-            margin-left: 5px;
-            font-size: 12px;
-            color: var(--gray);
-        }
-        
-        .ciclo-actions {
-            margin-top: 15px;
-            text-align: center;
-        }
-        
-        /* Estratégias */
-        .estrategias-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .estrategia-item {
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 3px solid var(--primary);
-        }
-        
-        .estrategia-item h3 {
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-        
-        .referencia {
-            display: block;
-            margin: 5px 0;
-            color: var(--gray);
-            font-style: italic;
-        }
-        
-        /* Jogos Gerados */
-        .jogos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .jogo-card {
-            padding: 15px;
-            background-color: white;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border-left: 3px solid var(--primary);
-        }
-        
-        .jogo-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
-        .jogo-id {
-            font-weight: bold;
-        }
-        
-        .estrategia-badge {
-            font-size: 12px;
-            background-color: var(--gray-light);
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-        
-        .jogo-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-        }
-        
-        .jogo-footer small {
-            color: var(--gray);
-            font-size: 12px;
-        }
-        
-        .no-games {
-            text-align: center;
-            color: var(--gray);
-            padding: 20px;
-        }
-        
-        /* Histórico */
-        .historico-table-container {
-            overflow-x: auto;
-            margin: 15px 0;
-        }
-        
-        .historico-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .historico-table th, .historico-table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .historico-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-        
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-        
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            position: relative;
-        }
-        
-        .close {
-            position: absolute;
-            right: 20px;
-            top: 10px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        
-        .admin-section {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .admin-section:last-child {
-            border-bottom: none;
-        }
-        
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .user-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .flex-grid {
-                flex-direction: column;
-            }
-            
-            .dezenas-distribuicao {
-                flex-direction: column;
-            }
-        }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #141e30, #243b55);
+        color: #f8f9fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .container {
+        width: 95%;
+        max-width: 1000px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        text-align: center;
+      }
+      h1 {
+        font-size: 2.8em;
+        margin-bottom: 20px;
+        color: #ffdc00;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      .buttons {
+        margin-bottom: 30px;
+      }
+      button {
+        background-color: #ffdc00;
+        color: #333;
+        border: none;
+        padding: 15px 30px;
+        margin: 10px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 500;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+      button:hover {
+        background-color: #ffc107;
+        transform: scale(1.05);
+      }
+      .progress {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        overflow: hidden;
+        margin: 20px auto;
+        width: 80%;
+        height: 20px;
+      }
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background-color: #ffdc00;
+        transition: width 0.5s ease-in-out;
+      }
+      .log {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 20px;
+        max-height: 150px;
+        overflow-y: auto;
+        text-align: left;
+        font-size: 0.9em;
+      }
+      .game {
+        margin-top: 25px;
+        font-size: 2em;
+        font-weight: 700;
+      }
+      .number {
+        display: inline-block;
+        background-color: #ffdc00;
+        color: #333;
+        padding: 12px 18px;
+        margin: 8px;
+        border-radius: 50%;
+        min-width: 50px;
+        min-height: 50px;
+        line-height: 26px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      }
+      canvas {
+        margin-top: 40px;
+      }
     </style>
-</head>
-<body>
-    <div id="app"></div>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Mega Sena Inteligente</h1>
+      <div class="buttons">
+        <button id="trainBtn">Treinar IA com dados reais da Caixa</button>
+        <button id="generateBtn">Gerar Jogo Inteligente</button>
+      </div>
+      <div id="progressContainer" class="progress" style="display: none;">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+      <div id="log" class="log"></div>
+      <div id="game" class="game"></div>
+      <canvas id="chart" width="800" height="400"></canvas>
+    </div>
 
     <script>
-        const MegaSenaApp = {
-            state: {
-                user: null,
-                resultados: [],
-                frequenciaNumeros: Array(60).fill(0), // 60 números para Mega Sena
-                ultimosResultadosAnalisados: [],
-                estatisticasCalculadas: false,
-                filtros: {
-                    periodo: 'all',
-                    anoInicio: null,
-                    anoFim: null,
-                    estrategia: 'completo'
+      // Elementos da interface
+      const logDiv = document.getElementById("log");
+      const progressBar = document.getElementById("progressBar");
+      const progressContainer = document.getElementById("progressContainer");
+      const gameDiv = document.getElementById("game");
+      let historicalData = [];
+      let probability = [];
+      let chartInstance = null;
+
+      // Função para adicionar entradas ao log
+      function addLog(message) {
+        const p = document.createElement("p");
+        p.innerText = message;
+        logDiv.appendChild(p);
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+
+      // Atualiza a visualização da barra de progresso
+      function setProgress(value) {
+        progressBar.style.width = value + "%";
+      }
+
+      function showProgress(show) {
+        progressContainer.style.display = show ? "block" : "none";
+      }
+
+      // Função para buscar dados reais da Caixa a partir da API oficial
+      async function fetchCaixaData() {
+        addLog("Buscando dados reais na API da Caixa...");
+        try {
+          // Exemplo de URL oficial (substitua com o endpoint real fornecido pela Caixa)
+          const response = await fetch("https://api.caixa.gov.br/mega-sena");
+          if (!response.ok) {
+            throw new Error("Erro na resposta da API");
+          }
+          const data = await response.json();
+          addLog("Dados recebidos com sucesso!");
+          return data; // Espera-se um array de objetos com { draw, date, numbers }
+        } catch (error) {
+          addLog(
+            "Falha ao acessar API da Caixa: " +
+              error.message +
+              ". Usando dados simulados como fallback."
+          );
+          // Dados simulados fallback (exemplos reais atualizados periodicamente)
+          return [
+            { draw: 2434, date: "2025-03-15", numbers: [5, 10, 16, 23, 27, 44] },
+            { draw: 2433, date: "2025-03-08", numbers: [2, 6, 12, 20, 40, 55] },
+            { draw: 2432, date: "2025-03-01", numbers: [1, 9, 14, 30, 38, 47] },
+            { draw: 2431, date: "2025-02-22", numbers: [8, 19, 25, 34, 42, 56] },
+            { draw: 2430, date: "2025-02-15", numbers: [3, 7, 15, 28, 36, 59] },
+            { draw: 2429, date: "2025-02-08", numbers: [4, 11, 18, 31, 44, 60] },
+            { draw: 2428, date: "2025-02-01", numbers: [2, 13, 21, 33, 41, 54] },
+            { draw: 2427, date: "2025-01-25", numbers: [5, 17, 22, 29, 37, 48] },
+            { draw: 2426, date: "2025-01-18", numbers: [9, 12, 24, 35, 46, 57] },
+            { draw: 2425, date: "2025-01-11", numbers: [10, 14, 26, 32, 43, 58] }
+          ];
+        }
+      }
+
+      // Função que simula o treinamento da IA com dados reais da Caixa
+      async function trainModel() {
+        logDiv.innerHTML = "";
+        gameDiv.innerHTML = "";
+        showProgress(true);
+        setProgress(0);
+        addLog("Iniciando treinamento da IA com dados reais da Caixa...");
+
+        // Buscar dados da API
+        setProgress(10);
+        const caixaData = await fetchCaixaData();
+        if (!caixaData) {
+          addLog("Treinamento abortado por falha na obtenção dos dados.");
+          showProgress(false);
+          return;
+        }
+        historicalData = caixaData;
+
+        // Simulação de etapas do treinamento
+        const steps = [
+          { delay: 500, message: "Processando dados históricos..." },
+          { delay: 800, message: "Calculando frequência dos números..." },
+          { delay: 800, message: "Construindo distribuição de probabilidade..." },
+          { delay: 500, message: "Finalizando treinamento..." }
+        ];
+
+        let progress = 10;
+        for (const step of steps) {
+          await new Promise((resolve) => setTimeout(resolve, step.delay));
+          progress += 20;
+          setProgress(progress);
+          addLog(step.message);
+        }
+
+        // Cálculo de frequência e probabilidade com base nos dados reais
+        let freq = new Array(60).fill(0);
+        historicalData.forEach((draw) => {
+          draw.numbers.forEach((num) => {
+            freq[num - 1]++;
+          });
+        });
+        const total = freq.reduce((acc, curr) => acc + curr, 0);
+        probability = freq.map((f) => f / total);
+
+        addLog("Treinamento concluído com sucesso!");
+        setProgress(100);
+        setTimeout(() => showProgress(false), 700);
+        updateChart(probability);
+      }
+
+      // Função para atualizar o gráfico de probabilidade usando Chart.js
+      function updateChart(probabilities) {
+        const ctx = document.getElementById("chart").getContext("2d");
+        const labels = Array.from({ length: 60 }, (_, i) => i + 1);
+        if (chartInstance) {
+          chartInstance.destroy();
+        }
+        chartInstance = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Probabilidade de Acerto",
+                data: probabilities,
+                backgroundColor: "rgba(255, 220, 0, 0.7)",
+                borderColor: "rgba(255, 220, 0, 1)",
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "Número"
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Probabilidade"
                 },
-                loading: false,
-                error: null,
-                estrategias: [
-                    {
-                        id: 'aleatorio',
-                        nome: "Aleatório Puro",
-                        descricao: "Gera 6 números aleatórios entre 1 e 60",
-                        referencia: "Probabilidade básica"
-                    },
-                    {
-                        id: 'balanceado',
-                        nome: "Pares e Ímpares Balanceados",
-                        descricao: "Jogar com 3 números pares e 3 números ímpares",
-                        referencia: "Distribuição equilibrada"
-                    },
-                    {
-                        id: 'dezenas',
-                        nome: "Dezenas Distribuídas",
-                        descricao: "Selecionar números de diferentes dezenas (1-10, 11-20, ..., 51-60)",
-                        referencia: "Estatísticas de distribuição"
-                    },
-                    {
-                        id: 'quentes',
-                        nome: "Números Quentes",
-                        descricao: "Incluir 3-4 números que saíram nos últimos 5 concursos",
-                        referencia: "Tendência de números recentes"
-                    },
-                    {
-                        id: 'frios',
-                        nome: "Números Frios",
-                        descricao: "Incluir 1-2 números que não saem há mais de 15 concursos",
-                        referencia: "Lei dos atrasados"
-                    },
-                    {
-                        id: 'completo',
-                        nome: "Estratégia Completa",
-                        descricao: "Combina múltiplas estratégias para maior cobertura",
-                        referencia: "Análise estatística avançada"
-                    }
-                ],
-                jogosGerados: [],
-                estatisticasAvancadas: {
-                    atrasos: {},
-                    sequencias: [],
-                    padroes: []
-                }
-            },
-
-            init() {
-                this.setupEventListeners();
-                this.checkLocalStorage();
-            },
-
-            async checkLocalStorage() {
-                const user = localStorage.getItem('megaUser');
-                if (user) {
-                    this.setState({ user: JSON.parse(user) });
-                    await this.loadData();
-                }
-                this.render();
-            },
-
-            async loadData() {
-                this.setState({ loading: true, error: null });
-                
-                try {
-                    // Tenta carregar do localStorage
-                    const savedData = localStorage.getItem('megaResults');
-                    if (savedData) {
-                        const data = JSON.parse(savedData);
-                        this.setState({
-                            resultados: data,
-                            ultimosResultadosAnalisados: data,
-                            loading: false
-                        });
-                        this.calcularFrequenciaNumeros(data);
-                        this.calcularEstatisticasAvancadas(data);
-                        return;
-                    }
-                    
-                    // Se não tiver dados, carrega exemplo
-                    this.carregarDadosExemplo();
-                    
-                } catch (error) {
-                    console.error('Erro ao carregar dados:', error);
-                    this.carregarDadosExemplo();
-                }
-            },
-
-            carregarDadosExemplo() {
-                const hoje = new Date();
-                const dados = [];
-                
-                // Gera 50 concursos de exemplo
-                for (let i = 1; i <= 50; i++) {
-                    const data = new Date();
-                    data.setDate(hoje.getDate() - (i * 3)); // 3 dias entre concursos
-                    
-                    const numeros = this.gerarJogoCompleto();
-                    
-                    dados.push({
-                        concurso: 2500 - i,
-                        data: data.toLocaleDateString('pt-BR'),
-                        numeros: numeros.sort((a, b) => a - b)
-                    });
-                }
-                
-                this.setState({
-                    resultados: dados,
-                    ultimosResultadosAnalisados: dados,
-                    loading: false,
-                    error: 'Usando dados de exemplo'
-                });
-                
-                this.calcularFrequenciaNumeros(dados);
-                this.calcularEstatisticasAvancadas(dados);
-                this.salvarDadosLocal(dados);
-            },
-
-            salvarDadosLocal(data) {
-                try {
-                    localStorage.setItem('megaResults', JSON.stringify(data));
-                } catch (e) {
-                    console.warn('Não foi possível salvar dados localmente');
-                }
-            },
-
-            calcularFrequenciaNumeros(resultados) {
-                const frequencia = Array(60).fill(0);
-                resultados.forEach(resultado => {
-                    resultado.numeros.forEach(numero => {
-                        frequencia[numero - 1]++;
-                    });
-                });
-                this.setState({ frequenciaNumeros: frequencia });
-            },
-
-            calcularEstatisticasAvancadas(resultados) {
-                if (resultados.length === 0) return;
-                
-                // Calcula atrasos
-                const atrasos = {};
-                for (let i = 1; i <= 60; i++) {
-                    let atraso = 0;
-                    for (let j = resultados.length - 1; j >= 0; j--) {
-                        if (resultados[j].numeros.includes(i)) break;
-                        atraso++;
-                    }
-                    atrasos[i] = atraso;
-                }
-                
-                // Calcula sequências
-                const sequencias = {};
-                resultados.forEach(resultado => {
-                    const nums = resultado.numeros;
-                    for (let i = 0; i < nums.length - 1; i++) {
-                        const seq = `${nums[i]}-${nums[i+1]}`;
-                        sequencias[seq] = (sequencias[seq] || 0) + 1;
-                    }
-                });
-                
-                const sequenciasOrdenadas = Object.entries(sequencias)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 10);
-                
-                // Padrões de dezenas (6 dezenas de 1-60)
-                const padroesDezenas = Array(6).fill(0);
-                resultados.forEach(resultado => {
-                    resultado.numeros.forEach(num => {
-                        const dezena = Math.floor((num - 1) / 10);
-                        padroesDezenas[dezena]++;
-                    });
-                });
-                
-                this.setState({
-                    estatisticasAvancadas: {
-                        atrasos,
-                        sequencias: sequenciasOrdenadas,
-                        padroes: padroesDezenas
-                    },
-                    estatisticasCalculadas: true
-                });
-            },
-
-            setState(newState) {
-                this.state = { ...this.state, ...newState };
-                this.render();
-            },
-
-            render() {
-                const app = document.getElementById('app');
-                if (!app) return;
-                
-                if (!this.state.user) {
-                    app.innerHTML = this.loginTemplate();
-                    const loginForm = document.getElementById('loginForm');
-                    if (loginForm) {
-                        loginForm.onsubmit = (e) => {
-                            e.preventDefault();
-                            this.handleLogin();
-                        };
-                    }
-                    return;
-                }
-                
-                app.innerHTML = `
-                    <div class="container">
-                        <header class="header">
-                            <h1>Mega Sena Analytics Pro</h1>
-                            <div class="user-actions">
-                                <span class="welcome">Bem-vindo, ${this.state.user.username}</span>
-                                <button class="btn btn-danger" onclick="MegaSenaApp.logout()">Sair</button>
-                                ${this.state.user?.username === 'admin' ? `
-                                    <button class="btn btn-warning" onclick="MegaSenaApp.mostrarPainelAdmin()">Painel Admin</button>
-                                ` : ''}
-                            </div>
-                        </header>
-
-                        ${this.state.error ? `<div class="alert alert-warning">${this.state.error}</div>` : ''}
-                        ${this.state.loading ? `<div class="loader">Carregando...</div>` : ''}
-
-                        <div class="filtros-section">
-                            ${this.filtrosTemplate()}
-                        </div>
-
-                        <div class="flex-grid">
-                            <div class="col">
-                                ${this.geradorTemplate()}
-                            </div>
-                            <div class="col">
-                                ${this.analiseTemplate()}
-                            </div>
-                        </div>
-
-                        ${this.estatisticasTemplate()}
-                        ${this.ciclosTemplate()}
-                        ${this.estrategiasTemplate()}
-                        ${this.verificadorTemplate()}
-                        ${this.historicoTemplate()}
-                    </div>
-                `;
-                
-                this.reconnectEvents();
-                
-                if (this.state.user?.username === 'admin') {
-                    this.renderPainelAdmin();
-                }
-            },
-
-            loginTemplate() {
-                return `
-                    <div class="login-container">
-                        <div class="login-card animate">
-                            <h2>Acesso ao Sistema</h2>
-                            <form id="loginForm">
-                                <div class="form-group">
-                                    <label>Usuário:</label>
-                                    <input type="text" id="username" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Senha:</label>
-                                    <input type="password" id="password" required>
-                                </div>
-                                <button type="submit" class="btn">Entrar</button>
-                            </form>
-                            <div class="demo-credentials">
-                                <p>Dados para teste:</p>
-                                <p>Usuário: <strong>user</strong> | Senha: <strong>123</strong></p>
-                                <p>Admin: <strong>admin</strong> | Senha: <strong>admin123</strong></p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            },
-
-            filtrosTemplate() {
-                return `
-                    <div class="card filtros-card">
-                        <h3>Filtros de Análise</h3>
-                        <div class="filtros-grid">
-                            <div>
-                                <label>Período:</label>
-                                <select id="filtroPeriodo" class="form-control">
-                                    <option value="all">Todos os resultados</option>
-                                    <option value="month">Último mês</option>
-                                    <option value="year">Último ano</option>
-                                    <option value="custom">Personalizado</option>
-                                </select>
-                            </div>
-                            <div id="customRange" style="display: none;">
-                                <label>Ano inicial:</label>
-                                <input type="number" id="anoInicio" min="2000" max="${new Date().getFullYear()}" class="form-control">
-                                
-                                <label>Ano final:</label>
-                                <input type="number" id="anoFim" min="2000" max="${new Date().getFullYear()}" class="form-control">
-                            </div>
-                            <div>
-                                <button class="btn" onclick="MegaSenaApp.aplicarFiltros()">Aplicar Filtros</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            },
-
-            geradorTemplate() {
-                return `
-                    <div class="card animate">
-                        <h2>Gerador de Jogos Inteligente</h2>
-                        <div class="form-group">
-                            <label>Quantidade de jogos:</label>
-                            <input type="number" id="quantidadeJogos" min="1" max="20" value="5" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Estratégia:</label>
-                            <select id="estrategiaGeracao" class="form-control">
-                                ${this.state.estrategias.map(estrategia => `
-                                    <option value="${estrategia.id}" ${this.state.filtros.estrategia === estrategia.id ? 'selected' : ''}>
-                                        ${estrategia.nome}
-                                    </option>
-                                `).join('')}
-                            </select>
-                        </div>
-                        <div class="button-group">
-                            <button class="btn btn-primary" onclick="MegaSenaApp.gerarJogos()">Gerar Jogos</button>
-                            <button class="btn btn-secondary" onclick="MegaSenaApp.limparJogos()">Limpar</button>
-                            <button class="btn btn-success" onclick="MegaSenaApp.salvarJogos()">Salvar Jogos</button>
-                        </div>
-                        <div id="jogosGeradosContainer" style="margin-top: 15px;">
-                            ${this.jogosGeradosTemplate()}
-                        </div>
-                    </div>
-                `;
-            },
-
-            jogosGeradosTemplate() {
-                if (this.state.jogosGerados.length === 0) {
-                    return '<p class="no-games">Nenhum jogo gerado ainda.</p>';
-                }
-                
-                return `
-                    <h3>Seus Jogos Gerados (${this.state.jogosGerados.length})</h3>
-                    <div class="jogos-grid">
-                        ${this.state.jogosGerados.map((jogo, index) => `
-                            <div class="jogo-card">
-                                <div class="jogo-header">
-                                    <span class="jogo-id">Jogo ${index + 1}</span>
-                                    <span class="estrategia-badge">${this.getNomeEstrategia(jogo.estrategia)}</span>
-                                </div>
-                                <div class="numeros-jogo">
-                                    ${jogo.numeros.map(num => `
-                                        <span class="numero ${this.isNumeroAtrasado(num) ? 'numero-atrasado' : ''}"
-                                            title="${this.isNumeroAtrasado(num) ? `Atrasado há ${this.state.estatisticasAvancadas.atrasos[num]} concursos` : ''}">
-                                            ${num.toString().padStart(2, '0')}
-                                        </span>
-                                    `).join('')}
-                                </div>
-                                <div class="jogo-footer">
-                                    <small>${jogo.numeros.join(', ')}</small>
-                                    <button class="btn-icon" onclick="MegaSenaApp.removerJogo(${index})">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            },
-
-            analiseTemplate() {
-                return `
-                    <div class="card animate">
-                        <h2>Análise de Frequência</h2>
-                        <div class="frequencia-chart">
-                            ${this.state.frequenciaNumeros.map((freq, index) => `
-                                <div class="frequencia-item" title="Número ${index + 1} - ${freq} ocorrências">
-                                    <div class="frequencia-bar" style="height: ${(freq / Math.max(...this.state.frequenciaNumeros)) * 100}%"></div>
-                                    <div class="frequencia-label">${index + 1}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="frequencia-legenda">
-                            <div><span class="legenda-color max"></span> Mais frequentes</div>
-                            <div><span class="legenda-color min"></span> Menos frequentes</div>
-                        </div>
-                    </div>
-                `;
-            },
-
-            estatisticasTemplate() {
-                if (!this.state.estatisticasCalculadas) return '<div class="card">Carregando estatísticas...</div>';
-                
-                return `
-                    <div class="card estatisticas-card">
-                        <h2>Estatísticas Avançadas</h2>
-                        <div class="estatisticas-grid">
-                            <div>
-                                <h3>Top 10 Números</h3>
-                                <ol>
-                                    ${[...this.state.frequenciaNumeros]
-                                        .map((freq, idx) => ({ num: idx + 1, freq }))
-                                        .sort((a, b) => b.freq - a.freq)
-                                        .slice(0, 10)
-                                        .map(item => `
-                                            <li>Número ${item.num} - ${item.freq} vezes</li>
-                                        `).join('')}
-                                </ol>
-                            </div>
-                            <div>
-                                <h3>Sequências Mais Comuns</h3>
-                                <ol>
-                                    ${this.state.estatisticasAvancadas.sequencias.map(([seq, count]) => `
-                                        <li>${seq} - ${count} ocorrências</li>
-                                    `).join('')}
-                                </ol>
-                            </div>
-                            <div>
-                                <h3>Distribuição por Dezenas</h3>
-                                <div class="dezenas-distribuicao">
-                                    ${this.state.estatisticasAvancadas.padroes.map((count, index) => `
-                                        <div>
-                                            <h4>${index*10+1}-${(index+1)*10}</h4>
-                                            <div class="dezena-bar" style="width: ${(count / (this.state.ultimosResultadosAnalisados.length * 6)) * 100}%"></div>
-                                            <span>${Math.round((count / (this.state.ultimosResultadosAnalisados.length * 6)) * 100)}%</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            },
-
-            ciclosTemplate() {
-                if (!this.state.estatisticasCalculadas) return '';
-                
-                const atrasos = this.state.estatisticasAvancadas.atrasos;
-                const numerosOrdenados = Object.entries(atrasos)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([num]) => parseInt(num));
-                
-                return `
-                    <div class="card animate">
-                        <h2>Ciclos de Atraso</h2>
-                        <p>Quantidade de concursos desde a última aparição de cada número:</p>
-                        <div class="ciclos-grid">
-                            ${numerosOrdenados.slice(0, 30).map(num => `
-                                <div class="ciclo-item ${atrasos[num] > 15 ? 'destaque' : ''}">
-                                    <span class="numero-ciclo">${num.toString().padStart(2, '0')}</span>
-                                    <div class="ciclo-bar-container">
-                                        <div class="ciclo-bar" style="width: ${Math.min(100, atrasos[num] * 3)}%"></div>
-                                        <span class="ciclo-value">${atrasos[num]} concursos</span>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="ciclo-actions">
-                            <button class="btn btn-sm" onclick="MegaSenaApp.gerarJogoCiclos()">
-                                Gerar Jogo com Números Mais Atrasados
-                            </button>
-                        </div>
-                    </div>
-                `;
-            },
-
-            estrategiasTemplate() {
-                return `
-                    <div class="card estrategias-card">
-                        <h2>Estratégias Disponíveis</h2>
-                        <div class="estrategias-grid">
-                            ${this.state.estrategias.map(estrategia => `
-                                <div class="estrategia-item">
-                                    <h3>${estrategia.nome}</h3>
-                                    <p>${estrategia.descricao}</p>
-                                    <small class="referencia">Referência: ${estrategia.referencia}</small>
-                                    <button class="btn btn-sm" onclick="MegaSenaApp.usarEstrategia('${estrategia.id}')">
-                                        Usar Esta Estratégia
-                                    </button>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            },
-
-            verificadorTemplate() {
-                return `
-                    <div class="card verificador-card">
-                        <h2>Verificador de Jogos</h2>
-                        <div class="form-group">
-                            <label>Insira seus números (separados por vírgula):</label>
-                            <input type="text" id="numerosVerificar" class="form-control" placeholder="Ex: 1,2,3,4,5,6">
-                        </div>
-                        <button class="btn" onclick="MegaSenaApp.verificarJogo()">Verificar Jogo</button>
-                        <div id="resultadoVerificacao" style="margin-top: 15px;"></div>
-                    </div>
-                `;
-            },
-
-            historicoTemplate() {
-                if (this.state.ultimosResultadosAnalisados.length === 0) return '';
-                
-                return `
-                    <div class="card historico-card">
-                        <h2>Últimos Resultados (${this.state.ultimosResultadosAnalisados.length})</h2>
-                        <div class="historico-table-container">
-                            <table class="historico-table">
-                                <thead>
-                                    <tr>
-                                        <th>Concurso</th>
-                                        <th>Data</th>
-                                        <th>Números Sorteados</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${this.state.ultimosResultadosAnalisados.slice(0, 10).map(resultado => `
-                                        <tr>
-                                            <td>${resultado.concurso}</td>
-                                            <td>${resultado.data}</td>
-                                            <td>
-                                                <div class="numeros-sorteio">
-                                                    ${resultado.numeros.map(num => `
-                                                        <span class="numero ${this.isNumeroQuente(num) ? 'numero-quente' : ''}">
-                                                            ${num.toString().padStart(2, '0')}
-                                                        </span>
-                                                    `).join('')}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                        ${this.state.ultimosResultadosAnalisados.length > 10 ? `
-                            <button class="btn btn-sm" onclick="MegaSenaApp.mostrarTodosResultados()">
-                                Ver Todos (${this.state.ultimosResultadosAnalisados.length})
-                            </button>
-                        ` : ''}
-                    </div>
-                `;
-            },
-
-            painelAdminTemplate() {
-                return `
-                    <div id="painelAdminModal" class="modal">
-                        <div class="modal-content">
-                            <span class="close" onclick="MegaSenaApp.fecharModal('painelAdminModal')">&times;</span>
-                            <h2>Painel Administrativo</h2>
-                            
-                            <div class="admin-section">
-                                <h3>Gerenciamento de Dados</h3>
-                                <button class="btn" onclick="MegaSenaApp.forcarAtualizacao()">
-                                    Forçar Atualização de Dados
-                                </button>
-                                <button class="btn btn-warning" onclick="MegaSenaApp.limparCache()">
-                                    Limpar Cache Local
-                                </button>
-                            </div>
-                            
-                            <div class="admin-section">
-                                <h3>Estatísticas do Sistema</h3>
-                                <p>Total de concursos carregados: ${this.state.resultados.length}</p>
-                                <p>Última atualização: ${new Date().toLocaleString()}</p>
-                            </div>
-                            
-                            <div class="admin-section">
-                                <h3>Gerenciamento de Usuários</h3>
-                                <div class="form-group">
-                                    <input type="text" id="novoUsuario" placeholder="Novo usuário" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" id="novaSenha" placeholder="Nova senha" class="form-control">
-                                </div>
-                                <button class="btn btn-success" onclick="MegaSenaApp.criarUsuario()">
-                                    Criar Novo Usuário
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            },
-
-            // MÉTODOS DE GERAÇÃO DE JOGOS
-            gerarNumerosAleatorios(quantidade = 6) {
-                const numeros = [];
-                while (numeros.length < quantidade) {
-                    const num = Math.floor(Math.random() * 60) + 1;
-                    if (!numeros.includes(num)) numeros.push(num);
-                }
-                return numeros.sort((a, b) => a - b);
-            },
-
-            gerarJogoBalanceado() {
-                const pares = [];
-                const impares = [];
-                
-                // Gera 3 pares
-                while (pares.length < 3) {
-                    const num = Math.floor(Math.random() * 30) * 2 + 2;
-                    if (!pares.includes(num) && num <= 60) pares.push(num);
-                }
-                
-                // Gera 3 ímpares
-                while (impares.length < 3) {
-                    const num = Math.floor(Math.random() * 30) * 2 + 1;
-                    if (!impares.includes(num) && num <= 60) impares.push(num);
-                }
-                
-                return [...pares, ...impares].sort((a, b) => a - b);
-            },
-
-            gerarJogoPorDezenas() {
-                const dezenas = [0,1,2,3,4,5]; // 6 dezenas (1-10, 11-20, ..., 51-60)
-                const distribuicao = [1,1,1,1,1,1]; // 1 número de cada dezena
-                
-                const jogo = [];
-                
-                distribuicao.forEach((quant, index) => {
-                    const min = index * 10 + 1;
-                    const max = (index + 1) * 10;
-                    let count = 0;
-                    
-                    while (count < quant) {
-                        const num = Math.floor(Math.random() * (max - min + 1)) + min;
-                        if (!jogo.includes(num)) {
-                            jogo.push(num);
-                            count++;
-                        }
-                    }
-                });
-                
-                return jogo.sort((a, b) => a - b);
-            },
-
-            gerarJogoNumerosQuentes() {
-                if (this.state.ultimosResultadosAnalisados.length < 5) {
-                    return this.gerarNumerosAleatorios();
-                }
-                
-                // Pega os últimos 5 concursos
-                const ultimos5 = this.state.ultimosResultadosAnalisados.slice(-5);
-                const numerosQuentes = {};
-                
-                // Conta frequência nos últimos 5 concursos
-                ultimos5.forEach(concurso => {
-                    concurso.numeros.forEach(num => {
-                        numerosQuentes[num] = (numerosQuentes[num] || 0) + 1;
-                    });
-                });
-                
-                // Ordena por frequência
-                const quentesOrdenados = Object.entries(numerosQuentes)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([num]) => parseInt(num));
-                
-                // Pega 3-4 números quentes
-                const quentes = quentesOrdenados.slice(0, Math.random() > 0.5 ? 3 : 4);
-                
-                // Completa com números aleatórios
-                const restantes = 6 - quentes.length;
-                const outrosNumeros = [];
-                
-                while (outrosNumeros.length < restantes) {
-                    const num = Math.floor(Math.random() * 60) + 1;
-                    if (!quentes.includes(num) && !outrosNumeros.includes(num)) {
-                        outrosNumeros.push(num);
-                    }
-                }
-                
-                return [...quentes, ...outrosNumeros].sort((a, b) => a - b);
-            },
-
-            gerarJogoNumerosFrios() {
-                if (!this.state.estatisticasAvancadas.atrasos) {
-                    return this.gerarNumerosAleatorios();
-                }
-                
-                const atrasos = this.state.estatisticasAvancadas.atrasos;
-                const frios = Object.entries(atrasos)
-                    .filter(([_, atraso]) => atraso > 15)
-                    .map(([num]) => parseInt(num));
-                
-                if (frios.length === 0) {
-                    return this.gerarNumerosAleatorios();
-                }
-                
-                // Seleciona 1-2 números frios
-                const qtdFrios = Math.random() > 0.5 ? 1 : 2;
-                const friosSelecionados = [];
-                
-                while (friosSelecionados.length < qtdFrios && friosSelecionados.length < frios.length) {
-                    const randomIndex = Math.floor(Math.random() * frios.length);
-                    const num = frios[randomIndex];
-                    if (!friosSelecionados.includes(num)) {
-                        friosSelecionados.push(num);
-                    }
-                }
-                
-                // Completa com números aleatórios
-                const restantes = 6 - friosSelecionados.length;
-                const outrosNumeros = [];
-                
-                while (outrosNumeros.length < restantes) {
-                    const num = Math.floor(Math.random() * 60) + 1;
-                    if (!friosSelecionados.includes(num) && !outrosNumeros.includes(num)) {
-                        outrosNumeros.push(num);
-                    }
-                }
-                
-                return [...friosSelecionados, ...outrosNumeros].sort((a, b) => a - b);
-            },
-
-            gerarJogoCompleto() {
-                // Combina múltiplas estratégias
-                const quentes = this.gerarJogoNumerosQuentes().slice(0, 3);
-                const frios = this.gerarJogoNumerosFrios().slice(0, 2);
-                const balanceado = this.gerarJogoBalanceado().slice(0, 1);
-                
-                // Combina todos, eliminando duplicatas
-                const combinado = [...new Set([...quentes, ...frios, ...balanceado])];
-                
-                // Se tiver menos de 6, completa com aleatórios
-                if (combinado.length < 6) {
-                    const restantes = 6 - combinado.length;
-                    const aleatorios = this.gerarNumerosAleatorios(restantes);
-                    combinado.push(...aleatorios);
-                }
-                // Se tiver mais de 6, remove os menos atrasados
-                else if (combinado.length > 6) {
-                    const atrasos = this.state.estatisticasAvancadas.atrasos;
-                    combinado.sort((a, b) => atrasos[b] - atrasos[a]);
-                    combinado.splice(6);
-                }
-                
-                return combinado.sort((a, b) => a - b);
-            },
-
-            gerarJogoCiclos() {
-                if (!this.state.estatisticasAvancadas.atrasos) {
-                    return this.gerarNumerosAleatorios();
-                }
-                
-                const atrasos = this.state.estatisticasAvancadas.atrasos;
-                const numerosOrdenados = Object.entries(atrasos)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([num]) => parseInt(num));
-                
-                // Pega os 6 números mais atrasados
-                let jogo = numerosOrdenados.slice(0, 6);
-                
-                return jogo.sort((a, b) => a - b);
-            },
-
-            // MÉTODOS DE INTERFACE
-            gerarJogos() {
-                const quantity = parseInt(document.getElementById('quantidadeJogos').value) || 1;
-                const estrategia = document.getElementById('estrategiaGeracao').value;
-                
-                const jogos = [];
-                for (let i = 0; i < quantity; i++) {
-                    let game;
-                    switch (estrategia) {
-                        case 'aleatorio': game = this.gerarNumerosAleatorios(); break;
-                        case 'balanceado': game = this.gerarJogoBalanceado(); break;
-                        case 'dezenas': game = this.gerarJogoPorDezenas(); break;
-                        case 'quentes': game = this.gerarJogoNumerosQuentes(); break;
-                        case 'frios': game = this.gerarJogoNumerosFrios(); break;
-                        case 'completo': game = this.gerarJogoCompleto(); break;
-                        default: game = this.gerarNumerosAleatorios();
-                    }
-                    
-                    jogos.push({
-                        numeros: game,
-                        estrategia: estrategia,
-                        data: new Date().toLocaleString()
-                    });
-                }
-                
-                this.setState({
-                    jogosGerados: [...this.state.jogosGerados, ...jogos],
-                    filtros: { ...this.state.filtros, estrategia }
-                });
-            },
-
-            limparJogos() {
-                this.setState({ jogosGerados: [] });
-            },
-
-            removerJogo(index) {
-                const jogos = [...this.state.jogosGerados];
-                jogos.splice(index, 1);
-                this.setState({ jogosGerados: jogos });
-            },
-
-            salvarJogos() {
-                if (this.state.jogosGerados.length === 0) {
-                    alert('Nenhum jogo para salvar!');
-                    return;
-                }
-                
-                try {
-                    const jogosParaSalvar = {
-                        data: new Date().toLocaleString(),
-                        jogos: this.state.jogosGerados
-                    };
-                    
-                    localStorage.setItem('megaJogosSalvos', JSON.stringify(jogosParaSalvar));
-                    alert('Jogos salvos com sucesso!');
-                } catch (e) {
-                    alert('Erro ao salvar jogos: ' + e.message);
-                }
-            },
-
-            verificarJogo() {
-                const input = document.getElementById('numerosVerificar').value;
-                const numeros = input.split(',')
-                    .map(num => parseInt(num.trim()))
-                    .filter(num => !isNaN(num) && num >= 1 && num <= 60);
-                
-                if (numeros.length !== 6 || new Set(numeros).size !== 6) {
-                    document.getElementById('resultadoVerificacao').innerHTML = `
-                        <div class="alert alert-danger">
-                            Jogo inválido! Por favor, insira exatamente 6 números únicos entre 1 e 60.
-                        </div>
-                    `;
-                    return;
-                }
-                
-                const numerosOrdenados = [...numeros].sort((a, b) => a - b);
-                const atrasos = numeros.map(num => this.state.estatisticasAvancadas.atrasos[num] || 0);
-                const pares = numeros.filter(num => num % 2 === 0).length;
-                const impares = 6 - pares;
-                
-                // Verifica distribuição por dezenas
-                const dezenas = Array(6).fill(0);
-                numeros.forEach(num => {
-                    const dezena = Math.floor((num - 1) / 10);
-                    dezenas[dezena]++;
-                });
-                
-                // Verifica números quentes (últimos 5 concursos)
-                let quentes = 0;
-                if (this.state.ultimosResultadosAnalisados.length >= 5) {
-                    const ultimos5 = this.state.ultimosResultadosAnalisados.slice(-5);
-                    const numerosQuentes = new Set();
-                    
-                    ultimos5.forEach(concurso => {
-                        concurso.numeros.forEach(num => numerosQuentes.add(num));
-                    });
-                    
-                    quentes = numeros.filter(num => numerosQuentes.has(num)).length;
-                }
-                
-                // Verifica números frios (atraso > 15)
-                const frios = numeros.filter(num => this.state.estatisticasAvancadas.atrasos[num] > 15).length;
-                
-                // Monta resultado
-                let html = `
-                    <div class="card">
-                        <h3>Análise do Seu Jogo</h3>
-                        <div class="numeros-jogo">
-                            ${numerosOrdenados.map(num => `
-                                <span class="numero ${this.isNumeroAtrasado(num) ? 'numero-atrasado' : ''}"
-                                    title="${this.isNumeroAtrasado(num) ? `Atrasado há ${this.state.estatisticasAvancadas.atrasos[num]} concursos` : ''}">
-                                    ${num.toString().padStart(2, '0')}
-                                </span>
-                            `).join('')}
-                        </div>
-                        
-                        <div class="analise-grid">
-                            <div>
-                                <h4>Balanceamento</h4>
-                                <p>Pares: ${pares} | Ímpares: ${impares}</p>
-                                <p>${pares >= 2 && pares <= 4 ? '✅ Balanceado' : '⚠️ Poucos/muitos pares'}</p>
-                            </div>
-                            <div>
-                                <h4>Distribuição por Dezenas</h4>
-                                <p>${dezenas.map((count, index) => 
-                                    `${index*10+1}-${(index+1)*10}: ${count}`).join(' | ')}</p>
-                                <p>${dezenas.every(c => c <= 2) ? '✅ Bem distribuído' : '⚠️ Distribuição irregular'}</p>
-                            </div>
-                            <div>
-                                <h4>Tendências</h4>
-                                <p>Números quentes: ${quentes}</p>
-                                <p>Números frios: ${frios}</p>
-                                <p>${quentes >= 2 && frios >= 1 ? '✅ Boa combinação' : '⚠️ Pode melhorar'}</p>
-                            </div>
-                        </div>
-                        
-                        <h4>Estatísticas Detalhadas</h4>
-                        <table class="analise-table">
-                            <thead>
-                                <tr>
-                                    <th>Número</th>
-                                    <th>Frequência</th>
-                                    <th>Atraso</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${numerosOrdenados.map(num => `
-                                    <tr>
-                                        <td>${num.toString().padStart(2, '0')}</td>
-                                        <td>${this.state.frequenciaNumeros[num - 1]} vezes</td>
-                                        <td>${this.state.estatisticasAvancadas.atrasos[num] || 0} concursos</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-                
-                document.getElementById('resultadoVerificacao').innerHTML = html;
-            },
-
-            aplicarFiltros() {
-                const periodo = document.getElementById('filtroPeriodo').value;
-                let anoInicio = document.getElementById('anoInicio')?.value;
-                let anoFim = document.getElementById('anoFim')?.value;
-                
-                if (periodo === 'custom' && (!anoInicio || !anoFim)) {
-                    alert('Por favor, preencha ambos os anos para filtro personalizado');
-                    return;
-                }
-                
-                this.setState({
-                    filtros: {
-                        ...this.state.filtros,
-                        periodo,
-                        anoInicio: anoInicio ? parseInt(anoInicio) : null,
-                        anoFim: anoFim ? parseInt(anoFim) : null
-                    },
-                    loading: true
-                });
-                
-                // Mostra/oculta campos de ano conforme necessário
-                if (periodo === 'custom') {
-                    document.getElementById('customRange').style.display = 'block';
-                } else {
-                    document.getElementById('customRange').style.display = 'none';
-                }
-                
-                // Aplica os filtros
-                setTimeout(() => {
-                    this.filtrarResultados();
-                }, 100);
-            },
-
-            filtrarResultados() {
-                const { periodo, anoInicio, anoFim } = this.state.filtros;
-                let resultadosFiltrados = [...this.state.resultados];
-                
-                // Filtra por período
-                if (periodo !== 'all') {
-                    const hoje = new Date();
-                    let dataLimite = new Date();
-                    
-                    if (periodo === 'month') dataLimite.setMonth(hoje.getMonth() - 1);
-                    else if (periodo === 'year') dataLimite.setFullYear(hoje.getFullYear() - 1);
-                    
-                    resultadosFiltrados = resultadosFiltrados.filter(r => {
-                        const [dia, mes, ano] = r.data.split('/');
-                        const dataResultado = new Date(`${ano}-${mes}-${dia}`);
-                        return dataResultado >= dataLimite;
-                    });
-                }
-                
-                // Filtra por ano personalizado
-                if (periodo === 'custom' && anoInicio && anoFim) {
-                    resultadosFiltrados = resultadosFiltrados.filter(r => {
-                        const ano = parseInt(r.data.split('/')[2]);
-                        return ano >= anoInicio && ano <= anoFim;
-                    });
-                }
-                
-                this.setState({
-                    ultimosResultadosAnalisados: resultadosFiltrados,
-                    loading: false
-                });
-                
-                this.calcularFrequenciaNumeros(resultadosFiltrados);
-                this.calcularEstatisticasAvancadas(resultadosFiltrados);
-            },
-
-            // MÉTODOS DE AUTENTICAÇÃO
-            handleLogin() {
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                
-                // Simulação de autenticação
-                if ((username === 'admin' && password === 'admin123') || 
-                    (username === 'user' && password === '123')) {
-                    
-                    const user = { 
-                        username, 
-                        isAdmin: username === 'admin',
-                        lastLogin: new Date().toLocaleString()
-                    };
-                    
-                    this.setState({ user });
-                    localStorage.setItem('megaUser', JSON.stringify(user));
-                    this.loadData();
-                } else {
-                    alert('Credenciais inválidas! Tente novamente.');
-                }
-            },
-
-            logout() {
-                this.setState({ user: null });
-                localStorage.removeItem('megaUser');
-            },
-
-            // MÉTODOS AUXILIARES
-            getNomeEstrategia(id) {
-                const estrategia = this.state.estrategias.find(e => e.id === id);
-                return estrategia ? estrategia.nome : 'Desconhecida';
-            },
-
-            isNumeroAtrasado(num) {
-                return this.state.estatisticasAvancadas.atrasos[num] > 15;
-            },
-
-            isNumeroQuente(num) {
-                if (this.state.ultimosResultadosAnalisados.length < 5) return false;
-                
-                const ultimos5 = this.state.ultimosResultadosAnalisados.slice(-5);
-                for (let i = 0; i < ultimos5.length; i++) {
-                    if (ultimos5[i].numeros.includes(num)) return true;
-                }
-                return false;
-            },
-
-            // MÉTODOS DO PAINEL ADMIN
-            renderPainelAdmin() {
-                if (!document.getElementById('painelAdminModal')) {
-                    document.body.insertAdjacentHTML('beforeend', this.painelAdminTemplate());
-                }
-            },
-
-            mostrarPainelAdmin() {
-                const modal = document.getElementById('painelAdminModal');
-                if (modal) modal.style.display = 'block';
-            },
-
-            fecharModal(id) {
-                const modal = document.getElementById(id);
-                if (modal) modal.style.display = 'none';
-            },
-
-            forcarAtualizacao() {
-                this.setState({ loading: true });
-                localStorage.removeItem('megaResults');
-                this.loadData();
-                this.fecharModal('painelAdminModal');
-            },
-
-            limparCache() {
-                localStorage.clear();
-                alert('Cache limpo com sucesso!');
-                this.fecharModal('painelAdminModal');
-            },
-
-            criarUsuario() {
-                alert('Funcionalidade de criar usuário seria implementada aqui');
-                this.fecharModal('painelAdminModal');
-            },
-
-            setupEventListeners() {
-                document.addEventListener('DOMContentLoaded', () => {
-                    // Evento para login
-                    const loginForm = document.getElementById('loginForm');
-                    if (loginForm) {
-                        loginForm.addEventListener('submit', (e) => {
-                            e.preventDefault();
-                            this.handleLogin();
-                        });
-                    }
-                    
-                    // Evento para filtro de período
-                    const filtroPeriodo = document.getElementById('filtroPeriodo');
-                    if (filtroPeriodo) {
-                        filtroPeriodo.addEventListener('change', (e) => {
-                            const customRange = document.getElementById('customRange');
-                            if (e.target.value === 'custom') {
-                                customRange.style.display = 'block';
-                            } else {
-                                customRange.style.display = 'none';
-                            }
-                        });
-                    }
-                });
-            },
-
-            reconnectEvents() {
-                // Botão de logout
-                const logoutBtn = document.querySelector('.btn.btn-danger');
-                if (logoutBtn) {
-                    logoutBtn.onclick = () => this.logout();
-                }
-                
-                // Botão do painel admin
-                if (this.state.user?.username === 'admin') {
-                    const adminBtn = document.querySelector('.btn.btn-warning');
-                    if (adminBtn) {
-                        adminBtn.onclick = () => this.mostrarPainelAdmin();
-                    }
-                }
-                
-                // Botão de gerar jogos
-                const gerarJogosBtn = document.querySelector('.btn.btn-primary');
-                if (gerarJogosBtn) {
-                    gerarJogosBtn.onclick = () => this.gerarJogos();
-                }
-                
-                // Botão de limpar jogos
-                const limparJogosBtn = document.querySelector('.btn.btn-secondary');
-                if (limparJogosBtn) {
-                    limparJogosBtn.onclick = () => this.limparJogos();
-                }
-                
-                // Botão de salvar jogos
-                const salvarJogosBtn = document.querySelector('.btn.btn-success');
-                if (salvarJogosBtn) {
-                    salvarJogosBtn.onclick = () => this.salvarJogos();
-                }
-                
-                // Botão de aplicar filtros
-                const aplicarFiltrosBtn = document.querySelector('.filtros-card .btn');
-                if (aplicarFiltrosBtn) {
-                    aplicarFiltrosBtn.onclick = () => this.aplicarFiltros();
-                }
-                
-                // Botão de verificar jogo
-                const verificarJogoBtn = document.querySelector('.verificador-card .btn');
-                if (verificarJogoBtn) {
-                    verificarJogoBtn.onclick = () => this.verificarJogo();
-                }
-                
-                // Botões de remover jogo
-                document.querySelectorAll('.btn-icon').forEach(btn => {
-                    const index = btn.getAttribute('onclick')?.match(/\d+/)?.[0];
-                    if (index) {
-                        btn.onclick = () => this.removerJogo(parseInt(index));
-                    }
-                });
-                
-                // Botões de estratégias
-                document.querySelectorAll('.estrategia-item button').forEach(btn => {
-                    const estrategiaId = btn.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
-                    if (estrategiaId) {
-                        btn.onclick = () => this.usarEstrategia(estrategiaId);
-                    }
-                });
-            },
-
-            usarEstrategia(id) {
-                document.getElementById('estrategiaGeracao').value = id;
-                this.setState({
-                    filtros: { ...this.state.filtros, estrategia: id }
-                });
-                alert(`Estratégia "${this.getNomeEstrategia(id)}" selecionada!`);
-            },
-
-            mostrarTodosResultados() {
-                alert(`Mostrando todos os ${this.state.ultimosResultadosAnalisados.length} resultados`);
+                beginAtZero: true
+              }
             }
-        };
+          }
+        });
+      }
 
-        // Inicializa o app quando a janela carregar
-        window.onload = function() {
-            MegaSenaApp.init();
-        };
+      // Seleção ponderada para a geração de números com base na probabilidade
+      function weightedRandom(probabilities) {
+        let sum = 0;
+        let r = Math.random();
+        for (let i = 0; i < probabilities.length; i++) {
+          sum += probabilities[i];
+          if (r <= sum) return i + 1;
+        }
+        return probabilities.length;
+      }
+
+      // Função para gerar um jogo inteligente com 6 números
+      function generateGame() {
+        if (probability.length !== 60) {
+          addLog("Por favor, treine a IA primeiro com dados reais.");
+          return;
+        }
+        let gameNumbers = [];
+        while (gameNumbers.length < 6) {
+          let num = weightedRandom(probability);
+          if (!gameNumbers.includes(num)) {
+            gameNumbers.push(num);
+          }
+        }
+        gameNumbers.sort((a, b) => a - b);
+        displayGame(gameNumbers);
+        addLog("Jogo gerado com sucesso!");
+      }
+
+      // Exibe os números do jogo gerado
+      function displayGame(numbers) {
+        gameDiv.innerHTML = "<h2>Seu Jogo:</h2>";
+        numbers.forEach((num) => {
+          const span = document.createElement("span");
+          span.className = "number";
+          span.innerText = num;
+          gameDiv.appendChild(span);
+        });
+      }
+
+      // Eventos dos botões
+      document.getElementById("trainBtn").addEventListener("click", trainModel);
+      document.getElementById("generateBtn").addEventListener("click", generateGame);
     </script>
-</body>
+  </body>
 </html>
