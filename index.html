@@ -11,6 +11,7 @@
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
     <style>
       * {
         box-sizing: border-box;
@@ -24,6 +25,7 @@
         justify-content: center;
         align-items: center;
         min-height: 100vh;
+        overflow-x: hidden;
       }
       .container {
         width: 95%;
@@ -33,6 +35,8 @@
         border-radius: 20px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         text-align: center;
+        position: relative;
+        z-index: 2;
       }
       h1 {
         font-size: 2.8em;
@@ -104,13 +108,30 @@
       canvas {
         margin-top: 40px;
       }
+      /* Efeito Matrix */
+      #matrix {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+      }
+      #matrix canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
     </style>
   </head>
   <body>
+    <div id="matrix"><canvas id="matrixCanvas"></canvas></div>
     <div class="container">
       <h1>Mega Sena Inteligente</h1>
       <div class="buttons">
-        <button id="trainBtn">Treinar IA com dados reais da Caixa</button>
+        <button id="updateBtn">Atualizar Dados Reais</button>
+        <button id="trainBtn">Treinar IA (L1 e L2)</button>
         <button id="generateBtn">Gerar Jogo Inteligente</button>
       </div>
       <div id="progressContainer" class="progress" style="display: none;">
@@ -148,63 +169,112 @@
         progressContainer.style.display = show ? "block" : "none";
       }
 
-      // Função para buscar dados reais da Caixa a partir da API oficial
+      // Função para buscar dados reais da API apiloterias.com.br
       async function fetchCaixaData() {
-        addLog("Buscando dados reais na API da Caixa...");
+        addLog("Buscando dados reais da Mega-Sena...");
         try {
-          // Exemplo de URL oficial (substitua com o endpoint real fornecido pela Caixa)
-          const response = await fetch("https://api.caixa.gov.br/mega-sena");
-          if (!response.ok) {
-            throw new Error("Erro na resposta da API");
-          }
-          const data = await response.json();
-          addLog("Dados recebidos com sucesso!");
-          return data; // Espera-se um array de objetos com { draw, date, numbers }
-        } catch (error) {
-          addLog(
-            "Falha ao acessar API da Caixa: " +
-              error.message +
-              ". Usando dados simulados como fallback."
+          const response = await axios.get(
+            "https://apiloterias.com.br/app/v2/resultado?loteria=megasena&token=kJdfLjd38Jai2ek&concurso=ultimos100"
           );
-          // Dados simulados fallback (exemplos reais atualizados periodicamente)
-          return [
-            { draw: 2434, date: "2025-03-15", numbers: [5, 10, 16, 23, 27, 44] },
-            { draw: 2433, date: "2025-03-08", numbers: [2, 6, 12, 20, 40, 55] },
-            { draw: 2432, date: "2025-03-01", numbers: [1, 9, 14, 30, 38, 47] },
-            { draw: 2431, date: "2025-02-22", numbers: [8, 19, 25, 34, 42, 56] },
-            { draw: 2430, date: "2025-02-15", numbers: [3, 7, 15, 28, 36, 59] },
-            { draw: 2429, date: "2025-02-08", numbers: [4, 11, 18, 31, 44, 60] },
-            { draw: 2428, date: "2025-02-01", numbers: [2, 13, 21, 33, 41, 54] },
-            { draw: 2427, date: "2025-01-25", numbers: [5, 17, 22, 29, 37, 48] },
-            { draw: 2426, date: "2025-01-18", numbers: [9, 12, 24, 35, 46, 57] },
-            { draw: 2425, date: "2025-01-11", numbers: [10, 14, 26, 32, 43, 58] }
-          ];
+
+          if (response.status !== 200 || !response.data || !Array.isArray(response.data)) {
+            throw new Error("Resposta inválida da API.");
+          }
+
+          const draws = response.data
+            .map((d) => ({
+              draw: d.numero_concurso,
+              date: d.data_sorteio,
+              numbers: d.dezenas.map(Number).filter((n) => n >= 1 && n <= 60)
+            }))
+            .filter((d) => d.numbers.length === 6);
+
+          if (draws.length === 0) {
+            throw new Error("Nenhum sorteio válido encontrado.");
+          }
+
+          addLog(`Dados recebidos: ${draws.length} sorteios processados.`);
+          return draws;
+        } catch (error) {
+          addLog("Erro ao buscar dados reais: " + error.message);
+          addLog("Por favor, tente novamente mais tarde.");
+          return null;
         }
       }
 
-      // Função que simula o treinamento da IA com dados reais da Caixa
-      async function trainModel() {
+      // Função para atualizar dados reais
+      async function updateData() {
         logDiv.innerHTML = "";
         gameDiv.innerHTML = "";
         showProgress(true);
         setProgress(0);
-        addLog("Iniciando treinamento da IA com dados reais da Caixa...");
+        addLog("Iniciando atualização de dados reais...");
 
-        // Buscar dados da API
         setProgress(10);
         const caixaData = await fetchCaixaData();
-        if (!caixaData) {
-          addLog("Treinamento abortado por falha na obtenção dos dados.");
+        if (!caixaData || caixaData.length === 0) {
+          addLog("Atualização abortada por falha na obtenção dos dados.");
           showProgress(false);
           return;
         }
         historicalData = caixaData;
 
-        // Simulação de etapas do treinamento
+        setProgress(100);
+        addLog("Dados atualizados com sucesso!");
+        setTimeout(() => showProgress(false), 700);
+      }
+
+      // Função de treinamento da IA com L1 e L2
+      async function trainModel() {
+        if (historicalData.length === 0) {
+          addLog("Por favor, atualize os dados reais primeiro.");
+          return;
+        }
+        logDiv.innerHTML = "";
+        gameDiv.innerHTML = "";
+        showProgress(true);
+        setProgress(0);
+        addLog("Iniciando treinamento da IA com L1 e L2...");
+
+        // Cálculo de frequência
+        let freq = new Array(60).fill(0);
+        historicalData.forEach((draw) => {
+          draw.numbers.forEach((num) => {
+            if (num >= 1 && num <= 60) {
+              freq[num - 1]++;
+            }
+          });
+        });
+
+        // Simulação de regularização L1 e L2
+        const lambda1 = 0.01; // Peso para L1 (Lasso)
+        const lambda2 = 0.01; // Peso para L2 (Ridge)
+        let probL1 = new Array(60).fill(0);
+        let probL2 = new Array(60).fill(0);
+        const total = freq.reduce((acc, curr) => acc + curr, 0);
+
+        // L1: Reduz probabilidades menos frequentes
+        freq.forEach((f, i) => {
+          probL1[i] = Math.max(0, f / total - lambda1);
+        });
+        const sumL1 = probL1.reduce((acc, curr) => acc + curr, 0);
+        probL1 = probL1.map((p) => (sumL1 ? p / sumL1 : 1 / 60));
+
+        // L2: Suaviza as probabilidades
+        freq.forEach((f, i) => {
+          probL2[i] = f / total / (1 + lambda2 * f);
+        });
+        const sumL2 = probL2.reduce((acc, curr) => acc + curr, 0);
+        probL2 = probL2.map((p) => (sumL2 ? p / sumL2 : 1 / 60));
+
+        // Combinar L1 e L2 (média ponderada)
+        probability = probL1.map((p1, i) => 0.5 * p1 + 0.5 * probL2[i]);
+
+        // Simulação de etapas
         const steps = [
-          { delay: 500, message: "Processando dados históricos..." },
-          { delay: 800, message: "Calculando frequência dos números..." },
-          { delay: 800, message: "Construindo distribuição de probabilidade..." },
+          { delay: 500, message: "Aplicando regularização L1..." },
+          { delay: 800, message: "Aplicando regularização L2..." },
+          { delay: 800, message: "Combinando probabilidades..." },
           { delay: 500, message: "Finalizando treinamento..." }
         ];
 
@@ -216,23 +286,13 @@
           addLog(step.message);
         }
 
-        // Cálculo de frequência e probabilidade com base nos dados reais
-        let freq = new Array(60).fill(0);
-        historicalData.forEach((draw) => {
-          draw.numbers.forEach((num) => {
-            freq[num - 1]++;
-          });
-        });
-        const total = freq.reduce((acc, curr) => acc + curr, 0);
-        probability = freq.map((f) => f / total);
-
         addLog("Treinamento concluído com sucesso!");
         setProgress(100);
         setTimeout(() => showProgress(false), 700);
         updateChart(probability);
       }
 
-      // Função para atualizar o gráfico de probabilidade usando Chart.js
+      // Função para atualizar o gráfico de probabilidade
       function updateChart(probabilities) {
         const ctx = document.getElementById("chart").getContext("2d");
         const labels = Array.from({ length: 60 }, (_, i) => i + 1);
@@ -245,7 +305,7 @@
             labels: labels,
             datasets: [
               {
-                label: "Probabilidade de Acerto",
+                label: "Probabilidade de Acerto (L1 + L2)",
                 data: probabilities,
                 backgroundColor: "rgba(255, 220, 0, 0.7)",
                 borderColor: "rgba(255, 220, 0, 1)",
@@ -273,7 +333,7 @@
         });
       }
 
-      // Seleção ponderada para a geração de números com base na probabilidade
+      // Seleção ponderada para geração de números
       function weightedRandom(probabilities) {
         let sum = 0;
         let r = Math.random();
@@ -281,19 +341,19 @@
           sum += probabilities[i];
           if (r <= sum) return i + 1;
         }
-        return probabilities.length;
+        return Math.floor(Math.random() * 60) + 1; // Fallback
       }
 
-      // Função para gerar um jogo inteligente com 6 números
+      // Função para gerar um jogo inteligente
       function generateGame() {
-        if (probability.length !== 60) {
-          addLog("Por favor, treine a IA primeiro com dados reais.");
+        if (probability.length !== 60 || probability.every((p) => p === 0)) {
+          addLog("Por favor, treine a IA primeiro.");
           return;
         }
         let gameNumbers = [];
         while (gameNumbers.length < 6) {
           let num = weightedRandom(probability);
-          if (!gameNumbers.includes(num)) {
+          if (!gameNumbers.includes(num) && num >= 1 && num <= 60) {
             gameNumbers.push(num);
           }
         }
@@ -313,7 +373,50 @@
         });
       }
 
+      // Efeito Matrix
+      const matrixCanvas = document.getElementById("matrixCanvas");
+      const ctx = matrixCanvas.getContext("2d");
+
+      matrixCanvas.height = window.innerHeight;
+      matrixCanvas.width = window.innerWidth;
+
+      const numbers = "0123456789";
+      const fontSize = 14;
+      const columns = matrixCanvas.width / fontSize;
+      const drops = [];
+
+      for (let x = 0; x < columns; x++) {
+        drops[x] = 1;
+      }
+
+      function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+        ctx.fillStyle = "#0f0";
+        ctx.font = fontSize + "px monospace";
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = numbers.charAt(Math.floor(Math.random() * numbers.length));
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+          if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+      }
+
+      setInterval(drawMatrix, 33);
+
+      // Ajustar canvas no redimensionamento
+      window.addEventListener("resize", () => {
+        matrixCanvas.height = window.innerHeight;
+        matrixCanvas.width = window.innerWidth;
+      });
+
       // Eventos dos botões
+      document.getElementById("updateBtn").addEventListener("click", updateData);
       document.getElementById("trainBtn").addEventListener("click", trainModel);
       document.getElementById("generateBtn").addEventListener("click", generateGame);
     </script>
